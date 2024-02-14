@@ -1,9 +1,7 @@
 import re
 from datetime import datetime
-from typing import Union
 
 import requests
-from requests import RequestException
 import configparser
 
 config = configparser.ConfigParser()
