@@ -46,62 +46,78 @@ dictionary = {
 def begin(user: str, passwd: str) -> dict[str, str]:
     try:
         get_request = requests.get(source_url, headers=headers)
+    except requests.exceptions.RequestException as e:
+        print(e)
+        raise e
+    else:
         match_wlan_user_ip = re.search(r'<input type="hidden" name="wlanuserip" id="wlanuserip" value="(.+?)"/>',
                                        get_request.text, re.I | re.S)
         wlan_user_ip = match_wlan_user_ip[1]
 
         match_csrfhw = re.search(r"<input type='hidden' name='CSRFHW' value='(.+?)' />", get_request.text, re.I | re.S)
         csrfhw = match_csrfhw[1]
+
         return {"wlanuserip": wlan_user_ip, "wlanmac": "", "firsturl": "notFound.jsp", "ssid": "", "usertype": "",
                 "gotopage": "/nauta_etecsa/LoginURL/mobile_login.jsp",
                 "successpage": "/nauta_etecsa/OnlineURL/mobile_index.jsp",
                 "loggerId": date_time_str, "lang": "es_ES", "username": user, "password": passwd,
                 "CSRFHW": csrfhw, }
-    except RequestException:
-        raise "Not connection"
 
 
 def query_servlet(data: dict[str, str]):
-    get_request = requests.get(source_url, headers=headers)
-    post_request = requests.post(source_url_query_servlet, headers=headers, cookies=get_request.cookies, data=data)
-
-    # Extract the loggerId value using regular expressions
-    logger_id = re.search(r'<input type="hidden" name="loggerId" id="loggerId" value="([^"]+)"', post_request.text)
-
-    if logger_id:
-        logger_id = logger_id.group(1)
-        print(logger_id)
+    try:
+        get_request = requests.get(source_url, headers=headers)
+        post_request = requests.post(source_url_query_servlet, headers=headers, cookies=get_request.cookies, data=data)
+    except requests.exceptions.RequestException as e:
+        print(e)
+        raise e
     else:
-        logger_id = ""
-        print("loggerId not found")
-    return logger_id
+        # Extract the loggerId value using regular expressions
+        logger_id = re.search(r'<input type="hidden" name="loggerId" id="loggerId" value="([^"]+)"', post_request.text)
+
+        if logger_id:
+            logger_id = logger_id.group(1)
+            print(logger_id)
+        else:
+            logger_id = ""
+            print("loggerId not found")
+        return logger_id
 
 
 def do_login(user: str, passwd: str):
-    post_request = requests.post(source_url_login_servlet, data={"username": user, "password": passwd, })
-    match_user_login = re.search(r'"El usuario ya está conectado."', post_request.text, re.I | re.S)
-    result = 0
-    attr_uuid = ""
-
-    if match_user_login:
-        print(match_user_login.group())
-        result = 1
+    try:
+        post_request = requests.post(source_url_login_servlet, data={"username": user, "password": passwd, })
+    except requests.exceptions.RequestException as e:
+        print(e)
+        raise e
     else:
-        match_attr_uuid = re.search(r"ATTRIBUTE_UUID=(.+?)&", post_request.text, re.I | re.S)
-        attr_uuid = match_attr_uuid[1]
-        print("ATTRIBUTE_UUID: ", attr_uuid)
-    return {"attr_uuid": attr_uuid, "response": result}
+        match_user_login = re.search(r'"El usuario ya está conectado."', post_request.text, re.I | re.S)
+        result = 0
+        attr_uuid = ""
+
+        if match_user_login:
+            print(match_user_login.group())
+            result = 1
+        else:
+            match_attr_uuid = re.search(r"ATTRIBUTE_UUID=(.+?)&", post_request.text, re.I | re.S)
+            attr_uuid = match_attr_uuid[1]
+            print("ATTRIBUTE_UUID: ", attr_uuid)
+        return {"attr_uuid": attr_uuid, "response": result}
 
 
 def do_logout(user: str, login_strptime: str, attr_uuid: str):
-    data_logout = {'username': user, 'ATTRIBUTE_UUID': attr_uuid, 'wlanacname': '', 'domain': '', 'remove': 1}
-    # Interpolating login_strptime and nauta user
-    data_logout["loggerId"] = f"{login_strptime}+{user}"
+    data_logout = {'username': user, 'ATTRIBUTE_UUID': attr_uuid, 'wlanacname': '', 'domain': '', 'remove': 1,
+                   "loggerId": f"{login_strptime}+{user}"}
 
     print("---------------------begin: LogoutServlet--------------------")
-    post_request = requests.post(source_url_logout_servlet, data=data_logout)
-    print(post_request.text)
-    print("----------------------end: LogoutServlet-------------------")
+    try:
+        post_request = requests.post(source_url_logout_servlet, data=data_logout)
+    except requests.exceptions.RequestException as e:
+        print(e)
+        raise e
+    else:
+        print(post_request.text)
+        print("----------------------end: LogoutServlet-------------------")
 
 
 def sign_in(user: str, passwd: str):
@@ -149,5 +165,5 @@ if __name__ == '__main__':
     if username != "" and password != "":
         sign_in(username, password)
 
-    if username != "":
-        sign_out(username)
+    # if username != "":
+    #     sign_out(username)
