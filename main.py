@@ -55,17 +55,18 @@ def begin(user: str, passwd: str) -> dict[str, str]:
         match_csrfhw = re.search(r"<input type='hidden' name='CSRFHW' value='(.+?)' />", get_request.text, re.I | re.S)
         csrfhw = match_csrfhw[1]
 
-        return {"wlanuserip": wlan_user_ip, "wlanmac": "", "firsturl": "notFound.jsp", "ssid": "", "usertype": "",
-                "gotopage": "/nauta_etecsa/LoginURL/mobile_login.jsp",
-                "successpage": "/nauta_etecsa/OnlineURL/mobile_index.jsp",
+        return {"wlanuserip": wlan_user_ip, "wlanmac": "", "firsturl": "notFound.jsp", "ssid": "nauta_hogar", "usertype": "",
+                "gotopage": "/nauta_hogar/LoginURL/pc_login.jsp",
+                "successpage": "/nauta_hogar/OnlineURL/pc_index.jsp",
                 "loggerId": date_time_str, "lang": "es_ES", "username": user, "password": passwd,
                 "CSRFHW": csrfhw, }
 
 
 def query_servlet(data: dict[str, str]):
     try:
-        get_request = requests.get(source_url, headers=headers)
-        post_request = requests.post(source_url_query_servlet, headers=headers, cookies=get_request.cookies, data=data)
+        # get_request = requests.get(source_url, headers=headers)
+        # post_request = requests.post(source_url_query_servlet, headers=headers, cookies=get_request.cookies, data=data)
+        post_request = requests.post(source_url_query_servlet, headers=headers, data=data)
     except requests.exceptions.RequestException as e:
         print(e)
         raise e
@@ -84,22 +85,28 @@ def query_servlet(data: dict[str, str]):
 
 def do_login(user: str, passwd: str):
     try:
-        post_request = requests.post(source_url_login_servlet, data={"username": user, "password": passwd, })
+        post_request = requests.post(source_url_login_servlet, headers=headers, data={"username": user,
+                                                                                      "password": passwd, })
     except requests.exceptions.RequestException as e:
         print(e)
         raise e
     else:
-        match_user_login = re.search(r'"El usuario ya está conectado."', post_request.text, re.I | re.S)
-        result = 0
+        match_attr_uuid = re.search(r"ATTRIBUTE_UUID=(.+?)&", post_request.text, re.I | re.S)
         attr_uuid = ""
+        result = -1
 
-        if match_user_login:
-            print(match_user_login.group())
-            result = 1
+        if match_attr_uuid is None:
+            match_user_login = re.search(r'"El usuario ya está conectado."', post_request.text, re.I | re.S)
+            if match_user_login is None:
+                result = 2
+            elif match_user_login.start():
+                print(match_user_login.group())
+                result = 1
         else:
-            match_attr_uuid = re.search(r"ATTRIBUTE_UUID=(.+?)&", post_request.text, re.I | re.S)
             attr_uuid = match_attr_uuid[1]
             print("ATTRIBUTE_UUID: ", attr_uuid)
+            result = 0
+
         return {"attr_uuid": attr_uuid, "response": result}
 
 
@@ -125,22 +132,25 @@ def sign_in(user: str, passwd: str):
     :param passwd:
     :return:
     """
-    data = begin(user, passwd)
+    try:
+        data = begin(user, passwd)
+    except Exception as e:
+        raise Exception(e)
+    else:
+        attr_uuid = do_login(user, passwd)
+        # If the response key is 0 satisfactory, but it is 1 then the user is already authenticated
+        if attr_uuid.get('response', 1) == 0:
+            # get loggerId
+            logger_id = query_servlet(data)
 
-    attr_uuid = do_login(user, passwd)
-    # If the response key is 0 satisfactory, but it is 1 then the user is already authenticated
-    if attr_uuid.get('response', 1) == 0:
-        # get loggerId
-        logger_id = query_servlet(data)
+            config.set('INFO', 'attr_uuid', attr_uuid.get('attr_uuid', ''))
+            config.set('INFO', 'logger_id', logger_id)
+            config.set('INFO', 'wlanuserip', data.get('wlanuserip', ''))
 
-        config.set('INFO', 'attr_uuid', attr_uuid.get('attr_uuid', ''))
-        config.set('INFO', 'logger_id', logger_id)
-        config.set('INFO', 'wlanuserip', data.get('wlanuserip', ''))
-
-        # writing the necessary info to the file to use later in the logout
-        with open('config.cfg', 'w') as configfile:
-            config.write(configfile)
-        print("Login")
+            # writing the necessary info to the file to use later in the logout
+            with open('config.cfg', 'w') as configfile:
+                config.write(configfile)
+            print("Login")
 
 
 def sign_out(user: str):
