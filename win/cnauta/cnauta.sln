@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cnauta", "cnauta.csproj", "{4D84A861-29C8-42B5-94D1-1EE455A68C65}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cnauta", "cnauta.csproj", "{3A2746B0-53FF-48F7-8403-072CE30CAB69}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -8,9 +8,9 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{4D84A861-29C8-42B5-94D1-1EE455A68C65}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4D84A861-29C8-42B5-94D1-1EE455A68C65}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4D84A861-29C8-42B5-94D1-1EE455A68C65}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4D84A861-29C8-42B5-94D1-1EE455A68C65}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3A2746B0-53FF-48F7-8403-072CE30CAB69}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A2746B0-53FF-48F7-8403-072CE30CAB69}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A2746B0-53FF-48F7-8403-072CE30CAB69}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A2746B0-53FF-48F7-8403-072CE30CAB69}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

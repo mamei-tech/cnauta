@@ -1,14 +1,14 @@
-﻿namespace cnauta
+﻿namespace cnauta.view
 {
     partial class FViewMain
     {
         /// <summary>
-        ///  Required designer variable.
+        /// Required designer variable.
         /// </summary>
         private System.ComponentModel.IContainer components = null;
 
         /// <summary>
-        ///  Clean up any resources being used.
+        /// Clean up any resources being used.
         /// </summary>
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
@@ -37,7 +37,7 @@
             // 
             this.buttonIncrement.Location = new System.Drawing.Point(12, 12);
             this.buttonIncrement.Name = "buttonIncrement";
-            this.buttonIncrement.Size = new System.Drawing.Size(73, 34);
+            this.buttonIncrement.Size = new System.Drawing.Size(66, 30);
             this.buttonIncrement.TabIndex = 0;
             this.buttonIncrement.Text = "Increment";
             this.buttonIncrement.UseVisualStyleBackColor = true;
@@ -45,9 +45,9 @@
             // 
             // labelIncrement
             // 
-            this.labelIncrement.Location = new System.Drawing.Point(91, 23);
+            this.labelIncrement.Location = new System.Drawing.Point(84, 21);
             this.labelIncrement.Name = "labelIncrement";
-            this.labelIncrement.Size = new System.Drawing.Size(58, 16);
+            this.labelIncrement.Size = new System.Drawing.Size(33, 16);
             this.labelIncrement.TabIndex = 1;
             this.labelIncrement.Text = "0";
             // 
@@ -63,8 +63,8 @@
             this.ResumeLayout(false);
         }
 
-        private System.Windows.Forms.Label labelIncrement;
         private System.Windows.Forms.Button buttonIncrement;
+        private System.Windows.Forms.Label labelIncrement;
 
         #endregion
     }

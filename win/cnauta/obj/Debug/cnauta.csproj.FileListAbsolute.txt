@@ -1,0 +1,9 @@
+D:\Source\.Net\nauta-portal\win\cnauta\bin\Debug\cnauta.exe.config
+D:\Source\.Net\nauta-portal\win\cnauta\bin\Debug\cnauta.exe
+D:\Source\.Net\nauta-portal\win\cnauta\bin\Debug\cnauta.pdb
+D:\Source\.Net\nauta-portal\win\cnauta\obj\Debug\cnauta.csprojAssemblyReference.cache
+D:\Source\.Net\nauta-portal\win\cnauta\obj\Debug\cnauta.Properties.Resources.resources
+D:\Source\.Net\nauta-portal\win\cnauta\obj\Debug\cnauta.view.FViewMain.resources
+D:\Source\.Net\nauta-portal\win\cnauta\obj\Debug\cnauta.csproj.GenerateResource.cache
+D:\Source\.Net\nauta-portal\win\cnauta\obj\Debug\cnauta.exe
+D:\Source\.Net\nauta-portal\win\cnauta\obj\Debug\cnauta.pdb
