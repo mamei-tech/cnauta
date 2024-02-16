@@ -1,3 +1,5 @@
+import argparse
+
 import requests
 from bs4 import BeautifulSoup
 import datetime
@@ -8,7 +10,18 @@ import configparser
 
 ua = UserAgent(browsers=['edge', 'chrome', 'firefox'])
 
-class MainActivity:
+
+def execute_menu(arg):
+    _nauta = PortalNauta()
+    if arg.l:
+        threading.Thread(target=_nauta.do_login()).start()
+    elif arg.o:
+        threading.Thread(target=_nauta.do_logout()).start()
+    else:
+        print("No option selected")
+
+
+class PortalNauta:
     def __init__(self):
         self.config = configparser.ConfigParser()
         self.config.read('config.cfg')
@@ -24,7 +37,7 @@ class MainActivity:
         self.source_url_logout_servlet: str = self.source_url + "/LogoutServlet"
         self.csrfhw: str = ""
         self.cookies = ""
-        self.header = {'User-Agent': str(ua.random), "Accept-Encoding": "gzip, deflate, br",}
+        self.header = {'User-Agent': str(ua.random), "Accept-Encoding": "gzip, deflate, br", }
 
     def username(self):
         return self.config.get('DEFAULT', "username")
@@ -95,16 +108,16 @@ class MainActivity:
             _soup = BeautifulSoup(_loggin.content, "html.parser")
 
             if "El nombre de usuario o contraseña son incorrectos" in _loggin.text:
-                # La contraseña es incorrecta.
+                # Password is incorrect.
                 self.user_passw_error = 1
             elif "No se pudo autorizar al usuario" in _loggin.text:
-                # El usuario es incorrecto.
+                # The user is incorrect.
                 self.user_passw_error = 2
             elif "Usted a realizado muchos intentos" in _loggin.text:
-                # Muchos intentos realizados
+                # Many attempts
                 self.user_passw_error = 3
             elif "Su tarjeta no tiene saldo disponible" in _loggin.text:
-                # Sin saldo en la cuenta
+                # No account balance
                 self.user_passw_error = 4
 
             # save attr_uuid in config.cfg
@@ -118,7 +131,8 @@ class MainActivity:
         data_logout = {'username': self.username(), 'ATTRIBUTE_UUID': self.attr_uuid(), 'wlanacname': '', 'domain': '',
                        'remove': 1, "loggerId": f"{self.logger_id()}+{self.username()}"}
         try:
-            post_request = requests.post(self.source_url_logout_servlet, data=data_logout, timeout=10, headers=self.header)
+            post_request = requests.post(self.source_url_logout_servlet, data=data_logout, timeout=10,
+                                         headers=self.header)
         except requests.exceptions.RequestException as e:
             print(e)
             raise e
@@ -127,6 +141,7 @@ class MainActivity:
 
 
 if __name__ == '__main__':
-    ma = MainActivity()
-    threading.Thread(target=ma.do_login()).start()
-    threading.Thread(target=ma.do_logout()).start()
+    parser = argparse.ArgumentParser(description='Portal Nauta Options')
+    parser.add_argument('-l', '-login', action='store_true', help='To sign-in')
+    parser.add_argument('-o', '-logout', action='store_true', help='To sign-out')
+    execute_menu(parser.parse_args())
