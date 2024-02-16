@@ -16,5 +16,11 @@ poetry shell
 
 ## build binary using pyinstaller
 ```bash
-poetry run pyinstaller --onefile main.py
+poetry run pyinstaller --onefile -n portal_nauta main.py
+```
+
+with upx, run:
+
+```bash
+poetry run pyinstaller --onefile -n portal_nauta --upx-dir=./ main.py
 ```
