@@ -13,3 +13,8 @@ run the following from the same directory:
 ```bash
 poetry shell
 ```
+
+## build binary using pyinstaller
+```bash
+poetry run pyinstaller  main.py
+```

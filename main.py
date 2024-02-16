@@ -123,7 +123,7 @@ class PortalNauta:
 
             # save attr_uuid in config.cfg
             self.set_attr_uuid(_soup.select_one("script").text.split("ATTRIBUTE_UUID=")[1].split("&")[0])
-            print(self.attr_uuid())
+            print("Satisfactorily authenticated")
         except Exception as e:
             print(e)
             raise e
@@ -138,7 +138,7 @@ class PortalNauta:
             print(e)
             raise e
         else:
-            print(post_request.text)
+            print("Logout satisfactorily")
 
 
 def start():
