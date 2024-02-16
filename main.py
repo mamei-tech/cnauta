@@ -1,4 +1,5 @@
 import argparse
+import sys
 
 import requests
 from bs4 import BeautifulSoup
@@ -6,6 +7,9 @@ import datetime
 import threading
 
 import configparser
+
+config = configparser.ConfigParser()
+config.read('config.cfg')
 
 
 def execute_menu(parser):
@@ -21,9 +25,6 @@ def execute_menu(parser):
 
 class PortalNauta:
     def __init__(self):
-        self.config = configparser.ConfigParser()
-        self.config.read('config.cfg')
-
         self.user_passw_error = -1
         self.estado_cuenta = None
         self.saldo_cuenta = None
@@ -39,23 +40,23 @@ class PortalNauta:
                        "Accept-Encoding": "gzip, deflate, br", }
 
     def username(self):
-        return self.config.get('DEFAULT', "username")
+        return config.get('CREDENTIAL', "username")
 
     def password(self):
-        return self.config.get('DEFAULT', "password")
+        return config.get('CREDENTIAL', "password")
 
     def logger_id(self):
-        return self.config.get('INFO', "logger_id")
+        return config.get('INFO', "logger_id")
 
     def attr_uuid(self):
-        return self.config.get('INFO', "attr_uuid")
+        return config.get('INFO', "attr_uuid")
 
     def set_attr_uuid(self, _attr_uuid):
-        self.config.set('INFO', 'attr_uuid', _attr_uuid)
-        # self.config.set('INFO', 'wlanuserip', )
+        config.set('INFO', 'attr_uuid', _attr_uuid)
+        # config.set('INFO', 'wlanuserip', )
 
     def set_logger_id(self, _logger_id):
-        self.config.set('INFO', 'logger_id', _logger_id)
+        config.set('INFO', 'logger_id', _logger_id)
 
     def _data(self):
         return {
@@ -141,7 +142,27 @@ class PortalNauta:
             print("Logout satisfactorily")
 
 
+def validate_config():
+    """validate the existence of the configuration file and some options"""
+    _sections = ['CREDENTIAL', 'INFO']
+    _cred_options = ['username', 'password']
+    _info_options = ['attr_uuid', 'logger_id', 'wlanuserip']
+
+    result_1 = all(x == y for x, y in zip(_cred_options, config.options('CREDENTIAL')))
+    result_2 = all(x == y for x, y in zip(_info_options, config.options('INFO')))
+
+    _username = config.get('CREDENTIAL', 'username')
+    _password = config.get('CREDENTIAL', 'password')
+
+    if result_1 and result_2 and len(_username) and len(_password):
+        return True
+    return False
+
+
 def start():
+    if not validate_config():
+        print("Check the configuration file")
+        sys.exit(1)
     parser = argparse.ArgumentParser(description='Portal Nauta Options')
     parser.add_argument('-l', '-login', action='store_true', help='To sign-in')
     parser.add_argument('-o', '-logout', action='store_true', help='To sign-out')
