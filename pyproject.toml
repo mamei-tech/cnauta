@@ -8,10 +8,14 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.9"
 requests = "^2.31.0"
-fake-useragent = "^1.4.0"
 bs4 = "^0.0.2"
 
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+
+#[tool.poetry.scripts]
+#build = "poetry run pyinstaller main.py --collect-submodules application --onefile --name myapi"
+#build = "pyinstaller:install"

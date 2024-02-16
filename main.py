@@ -4,21 +4,19 @@ import requests
 from bs4 import BeautifulSoup
 import datetime
 import threading
-from fake_useragent import UserAgent
 
 import configparser
 
-ua = UserAgent(browsers=['edge', 'chrome', 'firefox'])
 
-
-def execute_menu(arg):
+def execute_menu(parser):
+    arg = parser.parse_args()
     _nauta = PortalNauta()
     if arg.l:
         threading.Thread(target=_nauta.do_login()).start()
     elif arg.o:
         threading.Thread(target=_nauta.do_logout()).start()
     else:
-        print("No option selected")
+        parser.print_help()
 
 
 class PortalNauta:
@@ -37,7 +35,8 @@ class PortalNauta:
         self.source_url_logout_servlet: str = self.source_url + "/LogoutServlet"
         self.csrfhw: str = ""
         self.cookies = ""
-        self.header = {'User-Agent': str(ua.random), "Accept-Encoding": "gzip, deflate, br", }
+        self.header = {'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Gecko/20100101 Firefox/102.0",
+                       "Accept-Encoding": "gzip, deflate, br", }
 
     def username(self):
         return self.config.get('DEFAULT', "username")
@@ -94,6 +93,8 @@ class PortalNauta:
             if "alert(\"return null\");" not in str(_soup.select("script")[-1]):
                 self.estado_cuenta = _soup.select("table#sessioninfo > tbody > tr > td")[3].text
                 self.saldo_cuenta = _soup.select("table#sessioninfo > tbody > tr > td")[1].text
+                print("estado: ", self.estado_cuenta)
+                print("saldo: ", self.saldo_cuenta)
         except Exception as e:
             print(e)
             pass
@@ -140,8 +141,12 @@ class PortalNauta:
             print(post_request.text)
 
 
-if __name__ == '__main__':
+def start():
     parser = argparse.ArgumentParser(description='Portal Nauta Options')
     parser.add_argument('-l', '-login', action='store_true', help='To sign-in')
     parser.add_argument('-o', '-logout', action='store_true', help='To sign-out')
-    execute_menu(parser.parse_args())
+    execute_menu(parser)
+
+
+if __name__ == '__main__':
+    start()
