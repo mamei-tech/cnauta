@@ -15,7 +15,7 @@ config.read('config.cfg')
 def execute_menu(parser):
     arg = parser.parse_args()
     _nauta = PortalNauta()
-    if True:
+    if arg.l:
         threading.Thread(target=_nauta.do_login()).start()
     elif arg.o:
         threading.Thread(target=_nauta.do_logout()).start()
