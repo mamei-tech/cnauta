@@ -1,4 +1,5 @@
 import argparse
+import os
 import sys
 
 import requests
@@ -9,7 +10,12 @@ import threading
 import configparser
 
 config = configparser.ConfigParser()
-config.read('config.cfg')
+
+if os.path.exists('config.cfg'):
+    config.read('config.cfg')
+else:
+    print("Config file does not exist or could not be read.")
+    sys.exit(1)
 
 
 def execute_menu(parser):
@@ -168,8 +174,8 @@ def validate_config():
     _info_options = ['attr_uuid', 'logger_id', 'wlanuserip']
 
     if all(option in config.options('CREDENTIAL') for option in _cred_options) and \
-       all(option in config.options('INFO') for option in _info_options) and \
-       config.get('CREDENTIAL', 'username') and config.get('CREDENTIAL', 'password'):
+            all(option in config.options('INFO') for option in _info_options) and \
+            config.get('CREDENTIAL', 'username') and config.get('CREDENTIAL', 'password'):
         return True
     return False
 
