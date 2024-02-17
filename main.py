@@ -142,11 +142,16 @@ class PortalNauta:
         try:
             post_request = requests.post(self.source_url_logout_servlet, data=data_logout, timeout=10,
                                          headers=self.header)
+
+            contains_failure = "FAILURE" in post_request.text
         except requests.exceptions.RequestException as e:
             print(e)
             raise e
         else:
-            print("Logout satisfactorily")
+            if contains_failure:
+                print("Could not log out")
+            else:
+                print("Session closed successfully")
 
 
 def validate_config():
@@ -155,13 +160,9 @@ def validate_config():
     _cred_options = ['username', 'password']
     _info_options = ['attr_uuid', 'logger_id', 'wlanuserip']
 
-    result_1 = all(x == y for x, y in zip(_cred_options, config.options('CREDENTIAL')))
-    result_2 = all(x == y for x, y in zip(_info_options, config.options('INFO')))
-
-    _username = config.get('CREDENTIAL', 'username')
-    _password = config.get('CREDENTIAL', 'password')
-
-    if result_1 and result_2 and len(_username) and len(_password):
+    if all(option in config.options('CREDENTIAL') for option in _cred_options) and \
+       all(option in config.options('INFO') for option in _info_options) and \
+       config.get('CREDENTIAL', 'username') and config.get('CREDENTIAL', 'password'):
         return True
     return False
 
