@@ -15,7 +15,7 @@ config.read('config.cfg')
 def execute_menu(parser):
     arg = parser.parse_args()
     _nauta = PortalNauta()
-    if arg.l:
+    if True:
         threading.Thread(target=_nauta.do_login()).start()
     elif arg.o:
         threading.Thread(target=_nauta.do_logout()).start()
@@ -25,7 +25,8 @@ def execute_menu(parser):
 
 class PortalNauta:
     def __init__(self):
-        self.user_passw_error = -1
+        self.login_error_code = -1
+        self.login_error_msg = -1
         self.estado_cuenta = None
         self.saldo_cuenta = None
         source_hostname: str = 'secure.etecsa.net'
@@ -110,28 +111,34 @@ class PortalNauta:
         try:
             self.begin()
             _loggin = requests.post(self.source_url_login_servlet,
-                                    data={"username": self.username(), "password": self.password()},
+                                    data=self._data(),
                                     allow_redirects=True, timeout=10, headers=self.header)
 
-            _soup = BeautifulSoup(_loggin.content, "html.parser")
+            _soup = BeautifulSoup(_loggin.text, "html.parser")
 
             if "El nombre de usuario o contraseña son incorrectos" in _loggin.text:
                 # Password is incorrect.
-                self.user_passw_error = 1
+                self.login_error_code = 1
+                self.login_error_msg = "Password is incorrect"
             elif "No se pudo autorizar al usuario" in _loggin.text:
                 # The user is incorrect.
-                self.user_passw_error = 2
+                self.login_error_code = 2
+                self.login_error_msg = "User incorrect"
             elif "Usted a realizado muchos intentos" in _loggin.text:
                 # Many attempts
-                self.user_passw_error = 3
+                self.login_error_code = 3
+                self.login_error_msg = "Many attempts"
             elif "Su tarjeta no tiene saldo disponible" in _loggin.text:
                 # No account balance
-                self.user_passw_error = 4
+                self.login_error_code = 4
+                self.login_error_msg = "No account balance"
 
-            print(_soup.select_one("script").text.split("ATTRIBUTE_UUID=")[1].split("&")[0])
-            # save attr_uuid in config.cfg
-            self.set_attr_uuid(_soup.select_one("script").text.split("ATTRIBUTE_UUID=")[1].split("&")[0])
-            print("Satisfactorily authenticated")
+            if self.login_error_code > 0:
+                print(self.login_error_msg)
+            else:
+                # save attr_uuid in config.cfg
+                self.set_attr_uuid(_soup.select_one("script").text.split("ATTRIBUTE_UUID=")[1].split("&")[0])
+                print("Satisfactorily authenticated")
         except Exception as e:
             print(e)
             raise e
