@@ -19,7 +19,7 @@ namespace cnauta.view
         #region ============ DELEGATES ===============================================
 
         public event EventHandler IncrementChanged;
-        public event EventHandler ehSaveConfig;
+        public event EventHandler EhSaveConfig;
 
         #endregion ===================================================================
 
@@ -100,7 +100,7 @@ namespace cnauta.view
         /// Calling the controller to invoke the action.
         /// </summary>
         /// <remarks>
-        /// Event will be handled through the handled registered to <see cref="IViewConfig.ehSaveConfig"/> in the controller
+        /// Event will be handled through the handled registered to <see cref="IViewConfig.EhSaveConfig"/> in the controller
         /// </remarks>
         private void btn_ConfigSave_Click(object sender, EventArgs e)
         {
@@ -110,12 +110,12 @@ namespace cnauta.view
                 return;
             }
             
-            this.ehSaveConfig?.Invoke(this, e);
+            this.EhSaveConfig?.Invoke(this, e);
         }
 
         #endregion ===================================================================
 
-        #region ============ LOCAL HANDLERS ==========================================
+        #region ============ LOCAL MOD HANDLERS ======================================
         
         /// <summary>
         /// Hide / un-hide the password present in the correspondent text box  

@@ -55,6 +55,7 @@
     <Compile Include="model\MConfigMgr.cs" />
     <Compile Include="model\MNumber.cs" />
     <Compile Include="model\schema\SchConfigData.cs" />
+    <Compile Include="model\schema\SchCredential.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Lib.cs" />

@@ -11,7 +11,7 @@ namespace cnauta.model
     /// <summary>
     /// Configuration Manager model
     /// </summary>
-    class MConfigMgr
+    public class MConfigMgr
     {
         #region ============ FIELDS ==================================================
 

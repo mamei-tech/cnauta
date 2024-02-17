@@ -6,10 +6,12 @@
         /// <summary>config file path</summary>
         public const string CONFIG_FILE = "appconfig.json";
         public const string MSG_E = "ERROR";
+        public const string MSG_I = "INFORMATION";
 
         public const string MSG_E_INVALID_ACCOUNT_DATA = "Invalid user data ({0})";
         public const string MSG_E_CONFIG_NOT_LOAD = "Could not load configuration file";
         public const string MSG_E_CONFIG_NOT_SAVED = "Could not save configuration file";
+        public const string MSG_I_ACCOUNT_SELECTION = "Please, select an account to use in the connection";
 
         public const char PAS_HIDE = '*'; 
         public const char PAS_SHOW = '\0'; 

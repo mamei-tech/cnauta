@@ -27,7 +27,7 @@ namespace cnauta.controller
             _mCfgMgr = new MConfigMgr();
 
             _view.IncrementChanged += VActionIncrementChanged;
-            _view.ehSaveConfig += VActionSaveConfig;
+            _view.EhSaveConfig += VActionSaveConfig;
             
             _view.InSetConfigData(_mCfgMgr.LoadConfig());
         }
@@ -50,8 +50,8 @@ namespace cnauta.controller
 
         private void VActionIncrementChanged(object sender, EventArgs e)
         {
-            this._mNumber.Increment();
-            this._view.InSetIncrementLabel(_mNumber.ToString());
+            _mNumber.Increment();
+            _view.InSetIncrementLabel(_mNumber.ToString());
         }
 
         #endregion ===================================================================
