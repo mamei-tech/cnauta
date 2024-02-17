@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "nauta portal"
-version = "0.1.0"
+version = "0.2.0"
 description = "Access to the Nauta Portal"
 authors = ["kmilo <kmilo.denis.glez@yandex.com>, dany <danif-mena@yandex.com>"]
 readme = "README.md"
