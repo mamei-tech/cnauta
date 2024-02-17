@@ -15,7 +15,7 @@ config.read('config.cfg')
 def execute_menu(parser):
     arg = parser.parse_args()
     _nauta = PortalNauta()
-    if arg.l:
+    if True:
         threading.Thread(target=_nauta.do_login()).start()
     elif arg.o:
         threading.Thread(target=_nauta.do_logout()).start()
@@ -54,9 +54,15 @@ class PortalNauta:
     def set_attr_uuid(self, _attr_uuid):
         config.set('INFO', 'attr_uuid', _attr_uuid)
         # config.set('INFO', 'wlanuserip', )
+        # writing the necessary info to the file to use later in the logout
+        with open('config.cfg', 'w') as configfile:
+            config.write(configfile)
 
     def set_logger_id(self, _logger_id):
         config.set('INFO', 'logger_id', _logger_id)
+        # writing the necessary info to the file to use later in the logout
+        with open('config.cfg', 'w') as configfile:
+            config.write(configfile)
 
     def _data(self):
         return {
@@ -122,6 +128,7 @@ class PortalNauta:
                 # No account balance
                 self.user_passw_error = 4
 
+            print(_soup.select_one("script").text.split("ATTRIBUTE_UUID=")[1].split("&")[0])
             # save attr_uuid in config.cfg
             self.set_attr_uuid(_soup.select_one("script").text.split("ATTRIBUTE_UUID=")[1].split("&")[0])
             print("Satisfactorily authenticated")
