@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using cnauta.controller;
+
 using cnauta.view;
+using cnauta.controller;
 
 namespace cnauta
 {
@@ -20,11 +18,10 @@ namespace cnauta
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            var form = new FViewMain();
-            var controller = new CMain(form);
-            
-            
-            Application.Run(form);
+            var mainView = new VMainMenuCxt();
+            var _ = new CMainMenu(mainView);
+
+            Application.Run(mainView);
         }
     }
 }
