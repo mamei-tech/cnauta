@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Drawing;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using cnauta.model.schema;
@@ -16,8 +19,8 @@ namespace cnauta.view
         
         private NotifyIcon _trayIcon;
         private ContextMenuStrip _contextMenuStrip;
-        
-        private bool _flagAccountLoaded;        // tell if we already load and list (on menu) the configured users credentials 
+
+        private bool _flagAccountLoaded;        // tells if we already load and list (on menu) the configured users credentials 
         private string _activeU;                // active user
         private string _activeP;                // active password
         
@@ -60,14 +63,15 @@ namespace cnauta.view
             {
                 Items =
                 {
+                    new ToolStripMenuItem(StrMenu.M_STATUS, null, null, StrMenu.M_STATUS),
                     new ToolStripMenuItem(StrMenu.M_CNX, null, (sender, _) => EhConnect?.Invoke(sender, EventArgs.Empty), StrMenu.M_CNX),
                     new ToolStripSeparator(),
                     new ToolStripMenuItem(StrMenu.M_TOOLS, null, null, StrMenu.M_TOOLS)
                     {
                         DropDownItems =
                         {
-                            new ToolStripMenuItem(StrMenu.M_TOOLS_AUTOCONX),
-                            new ToolStripMenuItem(StrMenu.M_TOOLS_AUTODISCONX)
+                            new ToolStripMenuItem(StrMenu.M_TOOLS_AUTOCONX) {Enabled = false},
+                            new ToolStripMenuItem(StrMenu.M_TOOLS_AUTODISCONX) {Enabled = false}
                         }
                     },
                     new ToolStripMenuItem(StrMenu.M_ACCOUNT, null, null, StrMenu.M_ACCOUNT) { Enabled = false },
@@ -101,7 +105,7 @@ namespace cnauta.view
         {
             if(_flagAccountLoaded) return;
             
-            var menuItem = (ToolStripMenuItem) _contextMenuStrip.Items[3];
+            var menuItem = (ToolStripMenuItem) _contextMenuStrip.Items[4];
             if (menuItem == null) return;
             
             if (!String.IsNullOrEmpty(data.DefaultUser))
@@ -121,6 +125,36 @@ namespace cnauta.view
                 
             menuItem.Enabled = true;
             _flagAccountLoaded = true;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="tk"></param>
+        /// <param name="cText"></param>
+        public async Task InShowReqSts(CancellationToken tk, string cText = StrMenu.M_STATUS)
+        {
+            try
+            {
+                string[] progressChars = { "-", "\\", "|", "/" };                           // for mimicking progress during http requests
+                uint pointer = 0;
+
+                for (var i = 0; i < 1024; i++, pointer++)
+                {
+                    tk.ThrowIfCancellationRequested();
+
+                    if (pointer > 3) pointer = 0;
+                    _contextMenuStrip.Items[0].Text = progressChars[pointer];
+
+                    await Task.Delay(50);
+                    // Thread.Sleep(1000);
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                _contextMenuStrip.Items[0].Text = cText;
+                throw;
+            } 
         }
 
         /// <summary>
@@ -184,7 +218,7 @@ namespace cnauta.view
         private void AccountsItem_Click(object sender, EventArgs _)
         {
             // getting configured connections accounts
-            var items = (_contextMenuStrip.Items[3] as ToolStripMenuItem)?.DropDownItems;            
+            var items = (_contextMenuStrip.Items[4] as ToolStripMenuItem)?.DropDownItems;            
             if (items == null) return;
 
             foreach (var account in items)

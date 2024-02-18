@@ -33,6 +33,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="HtmlAgilityPack, Version=1.11.59.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a">
+      <HintPath>packages\HtmlAgilityPack.1.11.59\lib\Net45\HtmlAgilityPack.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">
       <HintPath>packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
@@ -52,6 +56,8 @@
   <ItemGroup>
     <Compile Include="controller\CConfig.cs" />
     <Compile Include="controller\CMainMenu.cs" />
+    <Compile Include="model\extension\MHttpCnxExt.cs" />
+    <Compile Include="model\MHttpCnx.cs" />
     <Compile Include="model\MConfigMgr.cs" />
     <Compile Include="model\MNumber.cs" />
     <Compile Include="model\schema\SchConfigData.cs" />

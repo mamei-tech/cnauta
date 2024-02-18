@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 
 using Newtonsoft.Json;
 
@@ -41,7 +40,7 @@ namespace cnauta.model
         public SchConfigData LoadConfig()
         {
             if (!File.Exists(Strs.CONFIG_FILE)) return null;
-            if ((new FileInfo(Strs.CONFIG_FILE)).Length > (long)35000) return null;
+            if ((new FileInfo(Strs.CONFIG_FILE)).Length > 35000) return null;           // if the file is more than 3500 bytes, don't opened
 
             var json = File.ReadAllText(Strs.CONFIG_FILE);
 
