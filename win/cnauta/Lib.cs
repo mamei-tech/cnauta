@@ -57,7 +57,7 @@ namespace cnauta
     /// <summary>Static Menus string definitions</summary>
     static class StrMenu
     {
-        public const string M_STATUS = "       - Status -";
+        public const string M_STATUS = "        ▪ Standby ▪ ";
         public const string M_CNX = "⚡ Connect";
         public const string M_DCNX = "🕳 Disconnect";
 

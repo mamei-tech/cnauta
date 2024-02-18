@@ -65,10 +65,10 @@ namespace cnauta.controller
                         // TODO estamos conectados bien haz la visualización del tiempo q estas conectado. Pone un item en el menú q sea para mostrar el estado conectado, desconectado.
                     }
                 }
-                catch (HttpRequestException) { _view.InShowMsg(Strs.MSG_E_CANNOT_REQUEST); }
-                catch (TaskCanceledException) { _view.InShowMsg(Strs.MSG_E_TIMEOUT); }
-                catch (ArgumentNullException) { _view.InShowMsg(Strs.MSG_E_RARE_HTML); }
-                catch (InvalidOperationException) { _view.InShowMsg(Strs.MSG_E_LANDING_PAGE_FAIL); }
+                catch (HttpRequestException) { hlp_SendStopSig(); _view.InShowMsg(Strs.MSG_E_CANNOT_REQUEST); }
+                catch (TaskCanceledException) { hlp_SendStopSig(); _view.InShowMsg(Strs.MSG_E_TIMEOUT); }
+                catch (ArgumentNullException) { hlp_SendStopSig(); _view.InShowMsg(Strs.MSG_E_RARE_HTML); }
+                catch (InvalidOperationException) { hlp_SendStopSig(); _view.InShowMsg(Strs.MSG_E_LANDING_PAGE_FAIL); }
             }
             
             hlp_SendStopSig();                                                                                              // send a termination signal to remove the requesting indicator status on the view                

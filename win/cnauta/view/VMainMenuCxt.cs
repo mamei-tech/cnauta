@@ -128,26 +128,27 @@ namespace cnauta.view
         }
 
         /// <summary>
-        /// 
+        /// The first <see cref="ToolStripItem"/> if for app status feedback.
+        /// When the apps is making an HTTP request, this can help to show feedback to the user about wat is going on
         /// </summary>
-        /// <param name="tk"></param>
-        /// <param name="cText"></param>
+        /// <param name="tk">A cancellation token so it can notice if a caller want to terminate the execution</param>
+        /// <param name="cText">text to be shown in the <see cref="ToolStripItem"/> when termination happens</param>
         public async Task InShowReqSts(CancellationToken tk, string cText = StrMenu.M_STATUS)
         {
             try
             {
-                string[] progressChars = { "-", "\\", "|", "/" };                           // for mimicking progress during http requests
+                string[] progressChars = { "⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏" };   // for mimicking progress during http requests
                 uint pointer = 0;
 
                 for (var i = 0; i < 1024; i++, pointer++)
                 {
                     tk.ThrowIfCancellationRequested();
 
-                    if (pointer > 3) pointer = 0;
+                    if (pointer > 9) pointer = 0;
                     _contextMenuStrip.Items[0].Text = progressChars[pointer];
 
-                    await Task.Delay(50);
-                    // Thread.Sleep(1000);
+                    await Task.Delay(80);
+                    // Thread.Sleep(80);
                 }
             }
             catch (OperationCanceledException)
