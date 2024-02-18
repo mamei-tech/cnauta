@@ -173,3 +173,4 @@ cython_debug/
 .idea/
 win/cnauta/bin/
 win/cnauta/obj/
+win/cnauta/appconfig.json
