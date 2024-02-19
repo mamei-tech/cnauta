@@ -9,8 +9,10 @@ namespace cnauta
         public const string CONFIG_FILE = "appconfig.json";
         public const string MSG_E = "ERROR";
         public const string MSG_W = "WARING";
+        public const string MSG_C = "CRITICAL";
         public const string MSG_I = "INFORMATION";
 
+        public const string MSG_E_LOADING_CFG = "Error loading config. Please check the config file. \n\n\t\t        ❗ Program will terminate.";
         public const string MSG_E_INVALID_ACCOUNT_DATA = "Invalid user data ({0})";
         public const string MSG_E_CONFIG_NOT_LOAD = "Could not load configuration file";
         public const string MSG_E_CONFIG_NOT_SAVED = "Could not save configuration file";

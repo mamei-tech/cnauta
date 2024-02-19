@@ -50,6 +50,7 @@ namespace cnauta.model
             var json = File.ReadAllText(Strs.CONFIG_FILE);
 
             _cfg = JsonConvert.DeserializeObject<SchConfigData>(json);
+            if (!Validate()) throw new Exception();                                     // msg was setup on the caller
             return _cfg;
         }
 
@@ -127,6 +128,26 @@ namespace cnauta.model
             }
             
             if (want2Save) SaveConfig();
+        }
+
+        /// <summary>Runs a validation of the configuration</summary>
+        /// <returns>True if all was OK</returns>
+        private bool Validate()
+        {
+            if (_cfg.DefaultUser == null) return false;
+            if (_cfg.DefaultUserPass == null) return false;
+            
+            if (_cfg.AltAUSer == null) return false;
+            if (_cfg.AltAUSerPass == null) return false;
+            
+            if (_cfg.AltBUSer == null) return false;
+            if (_cfg.AltBUSerPass == null) return false;
+            
+            if (_cfg.LogIdToken == null) return false;
+            if (_cfg.UuidToken == null) return false;
+            if (_cfg.CsrfHwToken == null) return false;
+
+            return _cfg.ActiveAccount >= -1 && _cfg.ActiveAccount <= 3;
         }
 
         #endregion ===================================================================

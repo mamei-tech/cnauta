@@ -194,15 +194,25 @@ namespace cnauta.controller
         /// </summary>
         /// <remarks>VComputeCf == compute configuration file</remarks>
         /// <param name="sender">Sender object (eg. a windows form control)</param>
-        /// <param name="e">event arguments</param>
-        private void ChkCfgFromFile(object sender, EventArgs e)
+        /// <param name="_">event arguments</param>
+        private void ChkCfgFromFile(object sender, EventArgs _)
         {
             if (_flagCfgJustChecked) return;
             _flagCfgJustChecked = true;
+
+            SchConfigData config;
+            try
+            {
+                config = (new MConfigMgr()).LoadConfig();
+            }
+            catch (Exception)
+            {
+                _view.InShowMsg(Strs.MSG_E_LOADING_CFG, Strs.MSG_C);
+                VActionExit(null, null);
+                return;
+            }
             
-            var config = (new MConfigMgr()).LoadConfig();
             _view.InSetAccountsInMenu(config);
-            
             if (config.AreWeConnected)
                 _view.InSetConnSts(true, config.ActiveAccount);
         }
