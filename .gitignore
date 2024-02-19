@@ -177,3 +177,6 @@ cython_debug/
 win/cnauta/bin/
 win/cnauta/obj/
 win/cnauta/appconfig.json
+multiplatform/python/nauta-portal.*-win64
+multiplatform/python/nauta-portal.*-linux
+multiplatform/python/nauta-portal.*-darwin
