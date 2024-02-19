@@ -131,6 +131,23 @@ namespace cnauta.view
 
         #region ============ INTERFACE & METHODS =====================================
 
+        /// <summary>
+        /// Recover the status of the status indicator (first item on the menu)
+        /// </summary>
+        /// <param name="fromCxnSts">To know if caller comming from connected status</param>
+        public void InSetRecoverSts(bool fromCxnSts = true) 
+        {
+            if (fromCxnSts)
+            {
+                _contextMenuStrip.Items[0].BackColor = Color.LimeGreen;
+                _contextMenuStrip.Items[0].Text = StrMenu.M_STATUS_CONNECTED;
+                return;
+            }
+
+            _contextMenuStrip.Items[0].ResetBackColor();
+            _contextMenuStrip.Items[0].Text = StrMenu.M_STATUS_DISCONNECTED;
+        }
+
         /// <summary>Display a notification</summary>
         /// <param name="title">Notification title</param>
         /// <param name="content">Notification content</param>
@@ -258,7 +275,7 @@ namespace cnauta.view
         /// <remarks>SetReqSts == Set Up Request Status</remarks>
         /// <param name="tk">A cancellation token so it can notice if a caller want to terminate the execution</param>
         /// <param name="cText">text to be shown in the <see cref="ToolStripItem"/> when termination happens</param>
-        public async Task InSetReqSts(CancellationToken tk, string cText = StrMenu.M_STATUS_DISCONNECTED)
+        public async Task InSetReqSts(CancellationToken tk)
         {
             _contextMenuStrip.Items[0].ResetBackColor();
             
@@ -280,10 +297,6 @@ namespace cnauta.view
             }
             catch (OperationCanceledException)
             {
-                if (cText == StrMenu.M_STATUS_CONNECTED) _contextMenuStrip.Items[0].BackColor = Color.LimeGreen;
-                else _contextMenuStrip.Items[0].ResetBackColor();
-                
-                _contextMenuStrip.Items[0].Text = cText;
                 throw;
             } 
         }

@@ -69,8 +69,8 @@ namespace cnauta.controller
             
             try
             {
-                var wasOk = await cnx.TryToDisconnect(credential);                                                // requesting connection
-                hlp_SendStopSig();                                                                                    // send a termination signal to remove the requesting indicator status on the view
+                var wasOk = await cnx.TryToDisconnect(credential);                                         // requesting connection
+                hlp_SendStopSig();                                                                         // send a termination signal to remove the requesting indicator status on the view
                 _view.InSetCloseTrayMenu();
 
                 if (_dCnxAttempts > 2 && !wasOk)
@@ -98,10 +98,10 @@ namespace cnauta.controller
                         
                 _view.InSetConnSts();
             }
-            catch (HttpRequestException) { hlp_HandleConnectExp(Strs.MSG_E_CANNOT_REQUEST); }
-            catch (TaskCanceledException) { hlp_HandleConnectExp(Strs.MSG_E_TIMEOUT); }
-            catch (ArgumentNullException) { hlp_HandleConnectExp(Strs.MSG_E_RARE_HTML); }
-            catch (InvalidOperationException) { hlp_HandleConnectExp(Strs.MSG_E_LANDING_PAGE_FAIL); }
+            catch (HttpRequestException) { hlp_HandleConnectExp(Strs.MSG_E_CANNOT_REQUEST, true); }
+            catch (TaskCanceledException) { hlp_HandleConnectExp(Strs.MSG_E_TIMEOUT, true); }
+            catch (ArgumentNullException) { hlp_HandleConnectExp(Strs.MSG_E_RARE_HTML, true); }
+            catch (InvalidOperationException) { hlp_HandleConnectExp(Strs.MSG_E_LANDING_PAGE_FAIL, true); }
         }
 
         /// <summary>
@@ -119,7 +119,7 @@ namespace cnauta.controller
             }
             
             _cTkSource = new CancellationTokenSource();    
-            var _ = Task.Run(() => _view.InSetReqSts(_cTkSource.Token, StrMenu.M_STATUS_CONNECTED), _cTkSource.Token);                   //  run async a routine on the view to mimic / indicate the requesting status
+            var _ = Task.Run(() => _view.InSetReqSts(_cTkSource.Token), _cTkSource.Token);                   //  run async a routine on the view to mimic / indicate the requesting status
                 
             var cnx = new MHttpCnx();
 
@@ -150,14 +150,14 @@ namespace cnauta.controller
                     }
 
                     _view.InSetConnSts();
-                    _view.InSetCloseTrayMenu();                         // closing the menu
+                    _view.InSetCloseTrayMenu();                       // closing the menu
                 }
             }
-            catch (HttpRequestException) { hlp_HandleConnectExp(Strs.MSG_E_CANNOT_REQUEST);  }
-            catch (TaskCanceledException) { hlp_HandleConnectExp(Strs.MSG_E_TIMEOUT); }
-            catch (ArgumentNullException) { hlp_HandleConnectExp(Strs.MSG_E_RARE_HTML); }
-            catch (InvalidOperationException) { hlp_HandleConnectExp(Strs.MSG_E_LANDING_PAGE_FAIL); }
-            catch (Exception e) { hlp_HandleConnectExp(e.Message);  }
+            catch (HttpRequestException) { hlp_HandleConnectExp(Strs.MSG_E_CANNOT_REQUEST, false);  }
+            catch (TaskCanceledException) { hlp_HandleConnectExp(Strs.MSG_E_TIMEOUT, false); }
+            catch (ArgumentNullException) { hlp_HandleConnectExp(Strs.MSG_E_RARE_HTML, false); }
+            catch (InvalidOperationException) { hlp_HandleConnectExp(Strs.MSG_E_LANDING_PAGE_FAIL, false); }
+            catch (Exception e) { hlp_HandleConnectExp(e.Message, false);  }
         }
         
         /// <summary>Try to get account balance</summary>
@@ -173,7 +173,7 @@ namespace cnauta.controller
             }
             
             _cTkSource = new CancellationTokenSource();    
-            var _ = Task.Run(() => _view.InSetReqSts(_cTkSource.Token, StrMenu.M_STATUS_CONNECTED), _cTkSource.Token);          //  run async a routine on the view to mimic / indicate the requesting status
+            var _ = Task.Run(() => _view.InSetReqSts(_cTkSource.Token), _cTkSource.Token);          //  run async a routine on the view to mimic / indicate the requesting status
             
             var cnx = new MHttpCnx();
             try
@@ -182,6 +182,7 @@ namespace cnauta.controller
                 
                 hlp_SendStopSig();                                        // send a termination signal to remove the requesting indicator status on the view
                 _view.InSetCloseTrayMenu();                               // closing the menu
+                _view.InSetRecoverSts(true);                              // recoverint the status feedback  
                 
                 if (balance < 0)
                     _view.InNotify(Strs.MSG_NTF_ACC_STS, Strs.MSG_NTF_ACC_STS_FAIL, ToolTipIcon.Error);
@@ -189,11 +190,11 @@ namespace cnauta.controller
                 var divider = credential.User.Contains("com.cu") ? 12.5 : 2.5;
                 _view.InNotify(Strs.MSG_NTF_ACC_STS, String.Format(Strs.MSG_NTF_ACC_STS_DATA, balance.ToString(CultureInfo.InvariantCulture),  balance / divider));
             }
-            catch (HttpRequestException) { hlp_HandleConnectExp(Strs.MSG_E_CANNOT_REQUEST);  }
-            catch (TaskCanceledException) { hlp_HandleConnectExp(Strs.MSG_E_TIMEOUT); }
-            catch (ArgumentNullException) { hlp_HandleConnectExp(Strs.MSG_E_RARE_HTML); }
-            catch (InvalidOperationException) { hlp_HandleConnectExp(Strs.MSG_E_LANDING_PAGE_FAIL); }
-            catch (Exception e) { hlp_HandleConnectExp(e.Message);  }
+            catch (HttpRequestException) { hlp_HandleConnectExp(Strs.MSG_E_CANNOT_REQUEST, true);  }
+            catch (TaskCanceledException) { hlp_HandleConnectExp(Strs.MSG_E_TIMEOUT, true); }
+            catch (ArgumentNullException) { hlp_HandleConnectExp(Strs.MSG_E_RARE_HTML, true); }
+            catch (InvalidOperationException) { hlp_HandleConnectExp(Strs.MSG_E_LANDING_PAGE_FAIL, true); }
+            catch (Exception e) { hlp_HandleConnectExp(e.Message, true);  }
         }
 
         /// <summary>
@@ -302,11 +303,13 @@ namespace cnauta.controller
         /// Just group and encapsulate a few instruction
         /// </summary>
         /// <param name="msg">Message to be displayed on the message box</param>
-        private void hlp_HandleConnectExp(string msg)
+        /// /// <param name="fromCxnSts">To know if caller comming from connected status</param>
+        private void hlp_HandleConnectExp(string msg, bool fromCxnSts)
         {
             hlp_SendStopSig();                                  // send a termination signal to remove the requesting indicator status on the view
             _view.InSetCloseTrayMenu();                         // closing the menu
             _view.InShowMsg(msg);                               // showing msg alert
+            _view.InSetRecoverSts(fromCxnSts);                  // restore the status indicator text & color, depending on the origin situation
         }
 
         #endregion ===================================================================
