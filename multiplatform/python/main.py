@@ -1,4 +1,5 @@
 import argparse
+import os
 import sys
 
 import requests
@@ -9,7 +10,12 @@ import threading
 import configparser
 
 config = configparser.ConfigParser()
-config.read('config.cfg')
+
+if os.path.exists('config.cfg'):
+    config.read('config.cfg')
+else:
+    print("Config file does not exist or could not be read.")
+    sys.exit(1)
 
 
 def execute_menu(parser):
@@ -25,7 +31,8 @@ def execute_menu(parser):
 
 class PortalNauta:
     def __init__(self):
-        self.user_passw_error = -1
+        self.login_error_code = -1
+        self.login_error_msg = -1
         self.estado_cuenta = None
         self.saldo_cuenta = None
         source_hostname: str = 'secure.etecsa.net'
@@ -54,9 +61,15 @@ class PortalNauta:
     def set_attr_uuid(self, _attr_uuid):
         config.set('INFO', 'attr_uuid', _attr_uuid)
         # config.set('INFO', 'wlanuserip', )
+        # writing the necessary info to the file to use later in the logout
+        with open('config.cfg', 'w') as configfile:
+            config.write(configfile)
 
     def set_logger_id(self, _logger_id):
         config.set('INFO', 'logger_id', _logger_id)
+        # writing the necessary info to the file to use later in the logout
+        with open('config.cfg', 'w') as configfile:
+            config.write(configfile)
 
     def _data(self):
         return {
@@ -104,27 +117,34 @@ class PortalNauta:
         try:
             self.begin()
             _loggin = requests.post(self.source_url_login_servlet,
-                                    data={"username": self.username(), "password": self.password()},
+                                    data=self._data(),
                                     allow_redirects=True, timeout=10, headers=self.header)
 
-            _soup = BeautifulSoup(_loggin.content, "html.parser")
+            _soup = BeautifulSoup(_loggin.text, "html.parser")
 
             if "El nombre de usuario o contraseña son incorrectos" in _loggin.text:
                 # Password is incorrect.
-                self.user_passw_error = 1
+                self.login_error_code = 1
+                self.login_error_msg = "Password is incorrect"
             elif "No se pudo autorizar al usuario" in _loggin.text:
                 # The user is incorrect.
-                self.user_passw_error = 2
+                self.login_error_code = 2
+                self.login_error_msg = "User incorrect"
             elif "Usted a realizado muchos intentos" in _loggin.text:
                 # Many attempts
-                self.user_passw_error = 3
+                self.login_error_code = 3
+                self.login_error_msg = "Many attempts"
             elif "Su tarjeta no tiene saldo disponible" in _loggin.text:
                 # No account balance
-                self.user_passw_error = 4
+                self.login_error_code = 4
+                self.login_error_msg = "No account balance"
 
-            # save attr_uuid in config.cfg
-            self.set_attr_uuid(_soup.select_one("script").text.split("ATTRIBUTE_UUID=")[1].split("&")[0])
-            print("Satisfactorily authenticated")
+            if self.login_error_code > 0:
+                print(self.login_error_msg)
+            else:
+                # save attr_uuid in config.cfg
+                self.set_attr_uuid(_soup.select_one("script").text.split("ATTRIBUTE_UUID=")[1].split("&")[0])
+                print("Satisfactorily authenticated")
         except Exception as e:
             print(e)
             raise e
@@ -135,11 +155,16 @@ class PortalNauta:
         try:
             post_request = requests.post(self.source_url_logout_servlet, data=data_logout, timeout=10,
                                          headers=self.header)
+
+            contains_failure = "FAILURE" in post_request.text
         except requests.exceptions.RequestException as e:
             print(e)
             raise e
         else:
-            print("Logout satisfactorily")
+            if contains_failure:
+                print("Could not log out")
+            else:
+                print("Session closed successfully")
 
 
 def validate_config():
@@ -148,13 +173,9 @@ def validate_config():
     _cred_options = ['username', 'password']
     _info_options = ['attr_uuid', 'logger_id', 'wlanuserip']
 
-    result_1 = all(x == y for x, y in zip(_cred_options, config.options('CREDENTIAL')))
-    result_2 = all(x == y for x, y in zip(_info_options, config.options('INFO')))
-
-    _username = config.get('CREDENTIAL', 'username')
-    _password = config.get('CREDENTIAL', 'password')
-
-    if result_1 and result_2 and len(_username) and len(_password):
+    if all(option in config.options('CREDENTIAL') for option in _cred_options) and \
+            all(option in config.options('INFO') for option in _info_options) and \
+            config.get('CREDENTIAL', 'username') and config.get('CREDENTIAL', 'password'):
         return True
     return False
 
