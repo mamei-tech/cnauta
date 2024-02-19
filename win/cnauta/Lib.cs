@@ -23,6 +23,11 @@ namespace cnauta
         public const string MSG_I_ACCOUNT_SELECTION = "Please, select a cnx account to be used";
         public const string MSG_I_ACCOUNT_INVALID_INDEX = "Index seems invalid";
 
+        public const string MSG_NTF_CONNECTED = "Connected";
+        public const string MSG_NTF_DISCONNECTED = "Logout OK";
+        public const string MSG_NTF_CONNECTED_DSC = "connection was stablished";
+        public const string MSG_NTF_DISCONNECTED_DSC = "connection was terminated";
+
         public const char PAS_HIDE = '*'; 
         public const char PAS_SHOW = '\0';
 

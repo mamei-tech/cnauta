@@ -16,6 +16,7 @@ namespace cnauta.controller
         #region ============ FIELDS ==================================================
 
         private ushort _dCnxAttempts;                                                       // disconnection attempts | UInt16
+        private bool _flagCfgJustChecked;                                                   // helps to know if we already done the first load of the config file, its very important if we are recovering from a previous connected status 
         
         private readonly IViewMainMenuCtx _view;
         private CancellationTokenSource _cTkSource;                                         // token use to send run termination signals  
@@ -29,9 +30,10 @@ namespace cnauta.controller
             _view = view;
             _cTkSource = null;
 
-            _dCnxAttempts = 1;                                                              // disconnect attempts counter 
+            _dCnxAttempts = 1;                                                              // disconnect attempts counter
+            _flagCfgJustChecked = false;
 
-            _view.EhComputeCfg += VComputeCfg;
+            _view.EhComputeCfg += ChkCfgFromFile;
             
             _view.EhExit += VActionExit;
             _view.EhConnect += VActionConnect;
@@ -179,13 +181,16 @@ namespace cnauta.controller
         /// <summary>
         /// Load the configure account credential from the configuration file, so it can
         /// be displayed (for user selection) on the application tray menu.
-        /// Also, check if app close despite remains connected in the last execution  
+        /// Also, check if app previously close while connected during execution, if so the apps react accordingly   
         /// </summary>
         /// <remarks>VComputeCf == compute configuration file</remarks>
         /// <param name="sender">Sender object (eg. a windows form control)</param>
         /// <param name="e">event arguments</param>
-        private void VComputeCfg(object sender, EventArgs e)
+        private void ChkCfgFromFile(object sender, EventArgs e)
         {
+            if (_flagCfgJustChecked) return;
+            _flagCfgJustChecked = true;
+            
             var config = (new MConfigMgr()).LoadConfig();
             _view.InSetAccountInMenu(config);
             

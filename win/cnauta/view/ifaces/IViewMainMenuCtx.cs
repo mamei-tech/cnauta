@@ -21,6 +21,7 @@ namespace cnauta.view.ifaces
         void InSetAccountInMenu(SchConfigData data);
         void InSetCloseTrayMenu();
         void InShowMsg(string errorMsg, string caption = Strs.MSG_E, MessageBoxIcon icon = MessageBoxIcon.Error);
+        void InNotify(string title, string content, ToolTipIcon icon = ToolTipIcon.Info);
         Task InSetReqSts(CancellationToken tk, string cText = StrMenu.M_STATUS_DISCONNECTED);
         void InSetConnSts(bool force2Connect = false, int accIndex = -1);
         

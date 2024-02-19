@@ -3,9 +3,10 @@ using System.Drawing;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using cnauta.controller.globalHandlers;
+
 using cnauta.model.schema;
 using cnauta.view.ifaces;
+using cnauta.controller.globalHandlers;
 
 namespace cnauta.view
 {
@@ -131,6 +132,18 @@ namespace cnauta.view
 
         #region ============ INTERFACE & METHODS =====================================
 
+        /// <summary>Display a notification</summary>
+        /// <param name="title">Notification title</param>
+        /// <param name="content">Notification content</param>
+        /// <param name="icon">Notification icon</param>
+        public void InNotify(string title, string content, ToolTipIcon icon = ToolTipIcon.Info)
+        {
+            _trayIcon.BalloonTipTitle = title;
+            _trayIcon.BalloonTipText = content;
+            _trayIcon.BalloonTipIcon = ToolTipIcon.Info;
+            _trayIcon.ShowBalloonTip(6000);
+        }
+
         /// <summary>
         /// Display in the app tray menu, the configured user connection account defined in the
         /// parameter [configuration] data 
@@ -183,6 +196,8 @@ namespace cnauta.view
                 _contextMenuStrip.Items[1].Text = StrMenu.M_DEFAULT_TIME;
                 _contextMenuStrip.Items[3].Text = StrMenu.M_CNX;
                 
+                InNotify(Strs.MSG_NTF_DISCONNECTED, Strs.MSG_NTF_DISCONNECTED_DSC);
+                
                 // timer section
                 _timer.Stop();
             }
@@ -194,6 +209,8 @@ namespace cnauta.view
                 stsItem.Text = StrMenu.M_STATUS_CONNECTED;
 
                 _contextMenuStrip.Items[3].Text = StrMenu.M_DCNX;
+                
+                InNotify(Strs.MSG_NTF_CONNECTED, Strs.MSG_NTF_CONNECTED_DSC);
                 
                 // timer section
                 _startTime = DateTime.Now;
