@@ -100,5 +100,6 @@ If you would like to contribute to this project, please follow these guidelines:
 5. Open a pull request to the original repository.
 
 
-License
+## License
+
 This project is licensed under the [GNU GENERAL PUBLIC LICENSE](./LICENSE).
