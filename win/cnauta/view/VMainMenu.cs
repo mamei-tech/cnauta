@@ -40,6 +40,7 @@ namespace cnauta.view
         #region ============ DELEGATES ===============================================
 
         public event EventHandler EhExit;
+        public event EventHandler EhChkSts;
         public event EventHandler EhConnect;
         public event EventHandler EhDisconnect;
         public event EventHandler EhComputeCfg;
@@ -93,7 +94,7 @@ namespace cnauta.view
                     {
                         DropDownItems =
                         {
-                            new ToolStripMenuItem(StrMenu.M_TOOLS_CHK_STATUS) {Enabled = false},
+                            new ToolStripMenuItem(StrMenu.M_TOOLS_CHK_STATUS, null, (sender, _) => EhChkSts?.Invoke(sender, EventArgs.Empty), StrMenu.M_TOOLS_CHK_STATUS) {Enabled = false},
                             new ToolStripMenuItem(StrMenu.M_TOOLS_AUTOCONX) {Enabled = false},
                             new ToolStripMenuItem(StrMenu.M_TOOLS_AUTODISCONX) {Enabled = false}
                         }
@@ -219,6 +220,7 @@ namespace cnauta.view
                 stsItem.ResetBackColor();
                 stsItem.Text = StrMenu.M_STATUS_DISCONNECTED;
 
+                ((ToolStripMenuItem) _contextMenuStrip.Items[5]).DropDownItems[0].Enabled = false;
                 _contextMenuStrip.Items[1].Text = StrMenu.M_DEFAULT_TIME;
                 _contextMenuStrip.Items[3].Text = StrMenu.M_CNX;
                 _contextMenuStrip.Items[7].Enabled = true;
@@ -235,6 +237,7 @@ namespace cnauta.view
                 stsItem.BackColor = Color.LimeGreen;
                 stsItem.Text = StrMenu.M_STATUS_CONNECTED;
 
+                ((ToolStripMenuItem) _contextMenuStrip.Items[5]).DropDownItems[0].Enabled = true;
                 _contextMenuStrip.Items[3].Text = StrMenu.M_DCNX;
                 _contextMenuStrip.Items[7].Enabled = false;
                 
@@ -277,6 +280,9 @@ namespace cnauta.view
             }
             catch (OperationCanceledException)
             {
+                if (cText == StrMenu.M_STATUS_CONNECTED) _contextMenuStrip.Items[0].BackColor = Color.LimeGreen;
+                else _contextMenuStrip.Items[0].ResetBackColor();
+                
                 _contextMenuStrip.Items[0].Text = cText;
                 throw;
             } 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Net.Http;
 using System.Threading;
 using System.Windows.Forms;
@@ -36,6 +37,7 @@ namespace cnauta.controller
             _view.EhComputeCfg += ChkCfgFromFile;
             
             _view.EhExit += VActionExit;
+            _view.EhChkSts += VActionChkSts;
             _view.EhConnect += VActionConnect;
             _view.EhDisconnect += VActionDisconnect;
             _view.EhOpenSettings += VActionOpenSettings;
@@ -117,7 +119,7 @@ namespace cnauta.controller
             }
             
             _cTkSource = new CancellationTokenSource();    
-            var _ = Task.Run(() => _view.InSetReqSts(_cTkSource.Token), _cTkSource.Token);                   //  run async a routine on the view to mimic / indicate the requesting status
+            var _ = Task.Run(() => _view.InSetReqSts(_cTkSource.Token, StrMenu.M_STATUS_CONNECTED), _cTkSource.Token);                   //  run async a routine on the view to mimic / indicate the requesting status
                 
             var cnx = new MHttpCnx();
 
@@ -157,6 +159,42 @@ namespace cnauta.controller
             catch (InvalidOperationException) { hlp_HandleConnectExp(Strs.MSG_E_LANDING_PAGE_FAIL); }
             catch (Exception e) { hlp_HandleConnectExp(e.Message);  }
         }
+        
+        /// <summary>Try to get account balance</summary>
+        /// <param name="__">Sender object (eg. a windows form control)</param>
+        /// <param name="___">event arguments</param>
+        private async void VActionChkSts(object __, EventArgs ___)
+        {
+            var credential = _view.OutGetActiveAccount();
+            if (credential == null)
+            {
+                _view.InShowMsg(Strs.MSG_I_ACCOUNT_SELECTION, Strs.MSG_I, MessageBoxIcon.Information);
+                return;
+            }
+            
+            _cTkSource = new CancellationTokenSource();    
+            var _ = Task.Run(() => _view.InSetReqSts(_cTkSource.Token, StrMenu.M_STATUS_CONNECTED), _cTkSource.Token);          //  run async a routine on the view to mimic / indicate the requesting status
+            
+            var cnx = new MHttpCnx();
+            try
+            {
+                var balance = await cnx.TryToGetAccountSts(credential);    // requesting connection
+                
+                hlp_SendStopSig();                                        // send a termination signal to remove the requesting indicator status on the view
+                _view.InSetCloseTrayMenu();                               // closing the menu
+                
+                if (balance < 0)
+                    _view.InNotify(Strs.MSG_NTF_ACC_STS, Strs.MSG_NTF_ACC_STS_FAIL, ToolTipIcon.Error);
+
+                var divider = credential.User.Contains("com.cu") ? 12.5 : 2.5;
+                _view.InNotify(Strs.MSG_NTF_ACC_STS, String.Format(Strs.MSG_NTF_ACC_STS_DATA, balance.ToString(CultureInfo.InvariantCulture),  balance / divider));
+            }
+            catch (HttpRequestException) { hlp_HandleConnectExp(Strs.MSG_E_CANNOT_REQUEST);  }
+            catch (TaskCanceledException) { hlp_HandleConnectExp(Strs.MSG_E_TIMEOUT); }
+            catch (ArgumentNullException) { hlp_HandleConnectExp(Strs.MSG_E_RARE_HTML); }
+            catch (InvalidOperationException) { hlp_HandleConnectExp(Strs.MSG_E_LANDING_PAGE_FAIL); }
+            catch (Exception e) { hlp_HandleConnectExp(e.Message);  }
+        }
 
         /// <summary>
         /// View Action Exit from the entire application
@@ -170,7 +208,7 @@ namespace cnauta.controller
             //Application.Exit();
             Environment.Exit(0);            // kill background tasks if any
         }
-        
+
         /// <summary>
         /// View Action Open Settings Form View
         /// </summary>
@@ -193,9 +231,9 @@ namespace cnauta.controller
         /// Also, check if app previously close while connected during execution, if so the apps react accordingly   
         /// </summary>
         /// <remarks>VComputeCf == compute configuration file</remarks>
-        /// <param name="sender">Sender object (eg. a windows form control)</param>
+        /// <param name="__">Sender object (eg. a windows form control)</param>
         /// <param name="_">event arguments</param>
-        private void ChkCfgFromFile(object sender, EventArgs _)
+        private void ChkCfgFromFile(object __, EventArgs _)
         {
             if (_flagCfgJustChecked) return;
             _flagCfgJustChecked = true;

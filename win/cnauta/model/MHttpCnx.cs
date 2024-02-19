@@ -1,9 +1,11 @@
 ﻿using System;
 using System.IO;
 using System.Net;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+
 using cnauta.model.extension;
 
 using HtmlAgilityPack;
@@ -91,6 +93,43 @@ namespace cnauta.model
         }
 
         /// <summary>
+        /// Tries to check (get) the current connected account status 
+        /// </summary>
+        /// <param name="ucred">User credential, account data so we can get the account balance</param>
+        public async Task<double> TryToGetAccountSts(SchCredential ucred)
+        {
+            var wasLandingOk = await Prequel();
+            if (!wasLandingOk) throw new InvalidOperationException();
+            
+            using (var hClient = new HttpClient(new HttpClientHandler
+            {
+                CookieContainer = _cookies,
+                AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate       // TIP ! use this ONLY if we are going to set the compressions headers to the client
+            }))
+            {
+                hClient.Timeout = TimeSpan.FromMilliseconds(TIMEOUT);
+                mkHeaders(hClient);
+                
+                var r = await hClient.PostAsync(StrsHots.HOST_URL_QUERY, mkReqCnxData(ucred));
+                r.EnsureSuccessStatusCode();
+                
+                using (var stream = await r.Content.ReadAsStreamAsync())
+                using (var reader = new StreamReader(stream))
+                {
+                    var htmlContent = await reader.ReadToEndAsync().ConfigureAwait(false);
+                    var doc = new HtmlDocument();
+                    doc.LoadHtml(htmlContent);
+
+                    var balance = (doc.DocumentNode.SelectNodes("//td"))[3];
+                    
+                    return balance.InnerText.Contains("CUP")
+                        ? Double.Parse(new string(balance.InnerText.Where(c => Char.IsDigit(c) || Char.IsPunctuation(c)).ToArray()))
+                        : -1;
+                }
+            }
+        }
+        
+        /// <summary>
         /// Request the HTTP account connection to the captive portal, so the active account actually connect to the internet using the portal 
         /// </summary>
         /// <param name="ucred">User credential, account data so the user can be connected to the captive portal</param>
@@ -133,9 +172,9 @@ namespace cnauta.model
         }
 
         /// <summary>
-        /// 
+        /// Tries to disconnect the current session from the captive portal 
         /// </summary>
-        /// <param name="ucred"></param>
+        /// <param name="ucred">User credential, account data so the user can be disconnected to the captive portal</param>
         public async Task<bool> TryToDisconnect(SchCredential ucred)
         {
             using (var hClient = new HttpClient())

@@ -1,5 +1,4 @@
-﻿using System;
-
+﻿
 namespace cnauta
 {
     /// <summary>Static common string definitions</summary>
@@ -29,6 +28,9 @@ namespace cnauta
         public const string MSG_NTF_DISCONNECTED = "Logout OK";
         public const string MSG_NTF_CONNECTED_DSC = "connection was stablished";
         public const string MSG_NTF_DISCONNECTED_DSC = "connection was terminated";
+        public const string MSG_NTF_ACC_STS = "Account balance";
+        public const string MSG_NTF_ACC_STS_FAIL = "can't get the data";
+        public const string MSG_NTF_ACC_STS_DATA = "balance: {0}\nhours: {1}";
 
         public const char PAS_HIDE = '*'; 
         public const char PAS_SHOW = '\0';
@@ -75,9 +77,9 @@ namespace cnauta
         public const string M_STATUS_CONNECTED = "     🟢 Connected ";
 
         public const string M_TOOLS = "⛏ Tools";
-        public const string M_TOOLS_CHK_STATUS = "Chk Status";
-        public const string M_TOOLS_AUTOCONX = "Auto Connect";
-        public const string M_TOOLS_AUTODISCONX = "Auto Disconnect";
+        public const string M_TOOLS_CHK_STATUS = "📊 Chk Status";
+        public const string M_TOOLS_AUTOCONX = "⏱ Auto Connect";
+        public const string M_TOOLS_AUTODISCONX = "⏱ Auto Disconnect";
 
         public const string M_ACCOUNT = "💳 Active Account";
         public const string M_SETTINGS = "⚙ Settings";

@@ -13,6 +13,7 @@ namespace cnauta.view.ifaces
         ContextMenuStrip ContextMenuStrip { get; }
         
         event EventHandler EhExit;
+        event EventHandler EhChkSts;
         event EventHandler EhConnect;
         event EventHandler EhDisconnect;
         event EventHandler EhComputeCfg;
