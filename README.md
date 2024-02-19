@@ -47,8 +47,29 @@ _In Cuba, there is only one ISP that offers home internet service (Nauta Hogar),
 - ### 🐍 [Python]
 - ### #️⃣ [C#]
 
-
-This project is licensed under the [GNU GPL](./LICENSE).
-
 [Python]: doc/python.md.md
 [C#]: doc/windows.md.md
+
+## Contributing
+
+If you would like to contribute to this project, please follow these guidelines:
+
+1. Fork the repository.
+2. Create a new branch:
+    ```bash
+      git checkout -b feature/your-feature
+    ```
+3. Make your changes and commit them:
+    ```bash
+      git commit -m "Add your commit message"
+    ```
+4. Push your changes to your forked repository:
+    ```bash
+      git push origin feature/your-feature
+    ```
+5. Open a pull request to the original repository.
+
+
+License
+This project is licensed under the [GNU GENERAL PUBLIC LICENSE](./LICENSE).
+
