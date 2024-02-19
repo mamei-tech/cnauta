@@ -173,8 +173,9 @@ namespace cnauta.controller
         {
             var form = new VFormConfigs();
             var _ = new CConfig(form);
-            form.Show();            
-            
+            form.Show();
+
+            _flagCfgJustChecked = false;                    // forcing next time menu (main view) was open, reload the config file, so we notice the conf update so app can react to it
             _view.InSetCloseTrayMenu();
         }
 
@@ -192,11 +193,15 @@ namespace cnauta.controller
             _flagCfgJustChecked = true;
             
             var config = (new MConfigMgr()).LoadConfig();
-            _view.InSetAccountInMenu(config);
+            _view.InSetAccountsInMenu(config);
             
             if (config.AreWeConnected)
                 _view.InSetConnSts(true, config.ActiveAccount);
         }
+        
+        #endregion ===================================================================
+        
+        #region ============ HELPERS =================================================
 
         /// <summary>
         /// Give the <see cref="PLoginResult"/> login result token, it will retrieve a msg string to explaining the login response reason 

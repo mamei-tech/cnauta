@@ -21,7 +21,6 @@ namespace cnauta.view
         private ContextMenuStrip _contextMenuStrip;
 
         private bool _flagAreConnected;         // tells if we already load and list (on menu) the configured users credentials 
-        private bool _flagAccountLoaded;        // tells if we already load and list (on menu) the configured users credentials 
         private string _activeU;                // active user
         private string _activeP;                // active password
         private int _activeAccI;                // active account index
@@ -55,7 +54,6 @@ namespace cnauta.view
             InitializeComponents();
 
             _flagAreConnected = connected;
-            _flagAccountLoaded = false;
             _activeU = "";
             _activeP = "";
         }
@@ -148,31 +146,59 @@ namespace cnauta.view
         /// Display in the app tray menu, the configured user connection account defined in the
         /// parameter [configuration] data 
         /// </summary>
+        /// <remarks>
+        /// Come in handy if for some reason, config change and we need to update the available accounts
+        /// </remarks>
         /// <param name="data">Configuration data to display the available user connection account</param>
-        public void InSetAccountInMenu(SchConfigData data)
+        public void InSetAccountsInMenu(SchConfigData data)
         {
-            if(_flagAccountLoaded) return;
+            uint howManyDoWeHave = 0;               // accounts
             
             var menuItem = (ToolStripMenuItem) _contextMenuStrip.Items[6];
             if (menuItem == null) return;
             
+            menuItem.DropDownItems.Clear();
+            menuItem.Enabled = true;
+
             if (!String.IsNullOrEmpty(data.DefaultUser))
+            {
+                howManyDoWeHave++;
                 menuItem.DropDownItems.Add(
                     new ToolStripMenuItem(data.DefaultUser, null, (sender, _) => AccountsItem_Click(sender, EventArgs.Empty)) 
                         { Name = data.DefaultUserPass });
-            
-            if(!String.IsNullOrEmpty(data.AltAUSer)) 
+            }
+
+            if (!String.IsNullOrEmpty(data.AltAUSer))
+            {
+                howManyDoWeHave++;
                 menuItem.DropDownItems.Add(
                     new ToolStripMenuItem(data.AltAUSer, null, (sender, _) => AccountsItem_Click(sender, EventArgs.Empty)) 
                         { Name = data.AltAUSerPass });
-            
-            if(!String.IsNullOrEmpty(data.AltBUSer))
+            }
+            if (!String.IsNullOrEmpty(data.AltBUSer))
+            {
+                howManyDoWeHave++;
                 menuItem.DropDownItems.Add(
                     new ToolStripMenuItem(data.AltBUSer, null, (sender, _) => AccountsItem_Click(sender, EventArgs.Empty)) 
                         { Name = data.AltBUSerPass });
-                
-            menuItem.Enabled = true;
-            _flagAccountLoaded = true;
+            }
+            
+
+            if (howManyDoWeHave > 1)
+            {
+                // clearing previous info, if for some reason, config change and we need to update the available account
+                _activeP = String.Empty;
+                _activeU = String.Empty;
+                _activeAccI = data.ActiveAccount;
+            }
+            else
+            {
+                // we have just one account available, so its no make any sense the user need to says which one is active, so
+                ((ToolStripMenuItem) menuItem.DropDownItems[0]).Checked = true;
+                _activeP = menuItem.DropDownItems[0].Name;
+                _activeU = menuItem.DropDownItems[0].Text;
+                _activeAccI = 0;
+            }
         }
 
         /// <summary>
@@ -195,6 +221,7 @@ namespace cnauta.view
 
                 _contextMenuStrip.Items[1].Text = StrMenu.M_DEFAULT_TIME;
                 _contextMenuStrip.Items[3].Text = StrMenu.M_CNX;
+                _contextMenuStrip.Items[7].Enabled = true;
                 
                 InNotify(Strs.MSG_NTF_DISCONNECTED, Strs.MSG_NTF_DISCONNECTED_DSC);
                 
@@ -209,6 +236,7 @@ namespace cnauta.view
                 stsItem.Text = StrMenu.M_STATUS_CONNECTED;
 
                 _contextMenuStrip.Items[3].Text = StrMenu.M_DCNX;
+                _contextMenuStrip.Items[7].Enabled = false;
                 
                 InNotify(Strs.MSG_NTF_CONNECTED, Strs.MSG_NTF_CONNECTED_DSC);
                 
@@ -332,13 +360,14 @@ namespace cnauta.view
                 return;
             }
             
-            var menuItem = (ToolStripMenuItem) (_contextMenuStrip.Items[6] as ToolStripMenuItem)?.DropDownItems[accountIndex];
+            var menuItem = (ToolStripMenuItem) (_contextMenuStrip.Items[6] as ToolStripMenuItem)?.DropDownItems[accountIndex];      // menuItem == account in this case
             
             if (menuItem == null) return;
             
             menuItem.Checked = true;
             _activeU = menuItem.Text;
             _activeP = menuItem.Name;
+            _activeAccI = accountIndex;
         }
 
         /// <summary>
@@ -351,6 +380,15 @@ namespace cnauta.view
             // getting configured connections accounts
             var items = (_contextMenuStrip.Items[6] as ToolStripMenuItem)?.DropDownItems;            
             if (items == null) return;
+            
+            _activeU = ((ToolStripMenuItem) sender).Text;
+            _activeP = ((ToolStripMenuItem) sender).Name;
+            
+            if (items.Count == 1)
+            {
+                ((ToolStripMenuItem) items[0]).Checked = true;
+                return;
+            }
 
             for (var i = 0; i < items.Count; i++)
             {
@@ -361,9 +399,6 @@ namespace cnauta.view
                 }
                 else ((ToolStripMenuItem) items[i]).Checked = false;
             }
-
-            _activeU = ((ToolStripMenuItem) sender).Text;
-            _activeP = ((ToolStripMenuItem) sender).Name;
         }
 
         /// <summary>

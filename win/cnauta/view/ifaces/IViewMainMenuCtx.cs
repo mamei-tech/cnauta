@@ -18,7 +18,7 @@ namespace cnauta.view.ifaces
         event EventHandler EhComputeCfg;
         event EventHandler EhOpenSettings;
 
-        void InSetAccountInMenu(SchConfigData data);
+        void InSetAccountsInMenu(SchConfigData data);
         void InSetCloseTrayMenu();
         void InShowMsg(string errorMsg, string caption = Strs.MSG_E, MessageBoxIcon icon = MessageBoxIcon.Error);
         void InNotify(string title, string content, ToolTipIcon icon = ToolTipIcon.Info);
