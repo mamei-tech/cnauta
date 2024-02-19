@@ -20,7 +20,7 @@ __pycache__/
 env/
 build/
 develop-eggs/
-dist/
+multiplatform/python/dist/
 downloads/
 eggs/
 .eggs/
@@ -34,7 +34,7 @@ share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
-/code.java
+code.java
 MANIFEST
 
 # PyInstaller
@@ -158,6 +158,9 @@ dmypy.json
 
 # pytype static type analyzer
 .pytype/
+
+# windows binary
+*.exe
 
 # Cython debug symbols
 cython_debug/

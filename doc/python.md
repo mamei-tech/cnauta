@@ -17,7 +17,7 @@ git clone https://github.com/mamei-tech/nauta-portal.git
 ### Navigate to the project directory:
 
 ```bash
-cd nauta-portal
+cd nauta-portal/multiplatform/python
 ```
 
 ### Install Poetry:

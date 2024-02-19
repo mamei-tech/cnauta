@@ -44,8 +44,8 @@ _In Cuba, there is only one ISP that offers home internet service (Nauta Hogar),
 
 ###implementaciones / implementations:
 
-- ### 🐍 [Python]
-- ### #️⃣ [C#]
+- ### 🐍 [Python](./multiplatform/python)
+- ### #️⃣ [C#](./win/cnauta)
 
 [Python]: doc/python.md.md
 [C#]: doc/windows.md.md
