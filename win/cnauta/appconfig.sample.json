@@ -1,0 +1,18 @@
+{
+  "DefaultUser": "userd@domain.cu",
+  "DefaultUserPass": "userpass",
+  
+  "AltAUSer": "usera@domain.cu",
+  "AltAUSerPass": "userpass",
+
+  "AltBUSer": "userb@domain.cu",
+  "AltBUSerPass": "userpass",
+
+  "LogIdToken": "",
+  "UuidToken": "",
+  "CsrfHwToken": "",
+
+  "AreWeConnected": "false",
+  "ActiveAccount": -1,
+  "ExitWhenConnect": "false"
+}
