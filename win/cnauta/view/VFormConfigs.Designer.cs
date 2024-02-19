@@ -30,8 +30,6 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(VFormConfigs));
-            this.buttonIncrement = new System.Windows.Forms.Button();
-            this.labelIncrement = new System.Windows.Forms.Label();
             this.lbl_defaultUser = new System.Windows.Forms.Label();
             this.txb_defaultUser = new System.Windows.Forms.TextBox();
             this.txb_defaultUserPass = new System.Windows.Forms.TextBox();
@@ -55,28 +53,14 @@
             this.txb_alternativeBUserPass = new System.Windows.Forms.TextBox();
             this.lbl_alternativeBUser = new System.Windows.Forms.Label();
             this.lbl_alternativeBPass = new System.Windows.Forms.Label();
+            this.pn_CfgBehaviour = new System.Windows.Forms.Panel();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.lb_cfgBehaviour = new System.Windows.Forms.Label();
             this.pn_CfgDefaultAccoun.SuspendLayout();
             this.pn_CfgAlternativeAccoun.SuspendLayout();
             this.pn_CfgAlternativeBAccoun.SuspendLayout();
+            this.pn_CfgBehaviour.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // buttonIncrement
-            // 
-            this.buttonIncrement.Location = new System.Drawing.Point(68, 159);
-            this.buttonIncrement.Name = "buttonIncrement";
-            this.buttonIncrement.Size = new System.Drawing.Size(66, 30);
-            this.buttonIncrement.TabIndex = 0;
-            this.buttonIncrement.Text = "Increment";
-            this.buttonIncrement.UseVisualStyleBackColor = true;
-            this.buttonIncrement.Click += new System.EventHandler(this.buttonIncrement_Click);
-            // 
-            // labelIncrement
-            // 
-            this.labelIncrement.Location = new System.Drawing.Point(29, 168);
-            this.labelIncrement.Name = "labelIncrement";
-            this.labelIncrement.Size = new System.Drawing.Size(33, 16);
-            this.labelIncrement.TabIndex = 1;
-            this.labelIncrement.Text = "0";
             // 
             // lbl_defaultUser
             // 
@@ -113,7 +97,7 @@
             // 
             // btn_ConfigSave
             // 
-            this.btn_ConfigSave.Location = new System.Drawing.Point(12, 273);
+            this.btn_ConfigSave.Location = new System.Drawing.Point(21, 273);
             this.btn_ConfigSave.Name = "btn_ConfigSave";
             this.btn_ConfigSave.Size = new System.Drawing.Size(75, 23);
             this.btn_ConfigSave.TabIndex = 6;
@@ -123,12 +107,13 @@
             // 
             // btn_configCancel
             // 
-            this.btn_configCancel.Location = new System.Drawing.Point(101, 273);
+            this.btn_configCancel.Location = new System.Drawing.Point(587, 273);
             this.btn_configCancel.Name = "btn_configCancel";
             this.btn_configCancel.Size = new System.Drawing.Size(75, 23);
             this.btn_configCancel.TabIndex = 7;
             this.btn_configCancel.Text = "❌ Cancel";
             this.btn_configCancel.UseVisualStyleBackColor = true;
+            this.btn_configCancel.Click += new System.EventHandler(this.btn_configCancel_Click);
             // 
             // pn_CfgDefaultAccoun
             // 
@@ -139,9 +124,9 @@
             this.pn_CfgDefaultAccoun.Controls.Add(this.txb_defaultUserPass);
             this.pn_CfgDefaultAccoun.Controls.Add(this.lbl_defaultUser);
             this.pn_CfgDefaultAccoun.Controls.Add(this.lbl_defaultPass);
-            this.pn_CfgDefaultAccoun.Location = new System.Drawing.Point(20, 23);
+            this.pn_CfgDefaultAccoun.Location = new System.Drawing.Point(21, 23);
             this.pn_CfgDefaultAccoun.Name = "pn_CfgDefaultAccoun";
-            this.pn_CfgDefaultAccoun.Size = new System.Drawing.Size(208, 100);
+            this.pn_CfgDefaultAccoun.Size = new System.Drawing.Size(210, 100);
             this.pn_CfgDefaultAccoun.TabIndex = 8;
             this.pn_CfgDefaultAccoun.Tag = "";
             // 
@@ -182,7 +167,7 @@
             this.pn_CfgAlternativeAccoun.Controls.Add(this.txb_alternativeAUserPass);
             this.pn_CfgAlternativeAccoun.Controls.Add(this.lbl_alternativeAUser);
             this.pn_CfgAlternativeAccoun.Controls.Add(this.lbl_alternativeAPass);
-            this.pn_CfgAlternativeAccoun.Location = new System.Drawing.Point(237, 23);
+            this.pn_CfgAlternativeAccoun.Location = new System.Drawing.Point(238, 23);
             this.pn_CfgAlternativeAccoun.Name = "pn_CfgAlternativeAccoun";
             this.pn_CfgAlternativeAccoun.Size = new System.Drawing.Size(208, 100);
             this.pn_CfgAlternativeAccoun.TabIndex = 10;
@@ -221,7 +206,6 @@
             this.lbl_alternativeAUser.Name = "lbl_alternativeAUser";
             this.lbl_alternativeAUser.Size = new System.Drawing.Size(53, 18);
             this.lbl_alternativeAUser.TabIndex = 2;
-            this.lbl_alternativeAUser.Text = "user";
             // 
             // lbl_alternativeAPass
             // 
@@ -229,7 +213,6 @@
             this.lbl_alternativeAPass.Name = "lbl_alternativeAPass";
             this.lbl_alternativeAPass.Size = new System.Drawing.Size(53, 18);
             this.lbl_alternativeAPass.TabIndex = 5;
-            this.lbl_alternativeAPass.Text = "pass";
             // 
             // lbl_panAlternativeBUser
             // 
@@ -249,7 +232,7 @@
             this.pn_CfgAlternativeBAccoun.Controls.Add(this.txb_alternativeBUserPass);
             this.pn_CfgAlternativeBAccoun.Controls.Add(this.lbl_alternativeBUser);
             this.pn_CfgAlternativeBAccoun.Controls.Add(this.lbl_alternativeBPass);
-            this.pn_CfgAlternativeBAccoun.Location = new System.Drawing.Point(454, 23);
+            this.pn_CfgAlternativeBAccoun.Location = new System.Drawing.Point(453, 23);
             this.pn_CfgAlternativeBAccoun.Name = "pn_CfgAlternativeBAccoun";
             this.pn_CfgAlternativeBAccoun.Size = new System.Drawing.Size(208, 100);
             this.pn_CfgAlternativeBAccoun.TabIndex = 12;
@@ -288,7 +271,6 @@
             this.lbl_alternativeBUser.Name = "lbl_alternativeBUser";
             this.lbl_alternativeBUser.Size = new System.Drawing.Size(53, 18);
             this.lbl_alternativeBUser.TabIndex = 2;
-            this.lbl_alternativeBUser.Text = "user";
             // 
             // lbl_alternativeBPass
             // 
@@ -296,13 +278,42 @@
             this.lbl_alternativeBPass.Name = "lbl_alternativeBPass";
             this.lbl_alternativeBPass.Size = new System.Drawing.Size(53, 18);
             this.lbl_alternativeBPass.TabIndex = 5;
-            this.lbl_alternativeBPass.Text = "pass";
+            // 
+            // pn_CfgBehaviour
+            // 
+            this.pn_CfgBehaviour.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pn_CfgBehaviour.Controls.Add(this.checkBox1);
+            this.pn_CfgBehaviour.Location = new System.Drawing.Point(21, 144);
+            this.pn_CfgBehaviour.Name = "pn_CfgBehaviour";
+            this.pn_CfgBehaviour.Size = new System.Drawing.Size(641, 112);
+            this.pn_CfgBehaviour.TabIndex = 14;
+            // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Location = new System.Drawing.Point(18, 24);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(135, 17);
+            this.checkBox1.TabIndex = 0;
+            this.checkBox1.Text = "Exit app when connect";
+            this.checkBox1.UseVisualStyleBackColor = true;
+            // 
+            // lb_cfgBehaviour
+            // 
+            this.lb_cfgBehaviour.AutoSize = true;
+            this.lb_cfgBehaviour.Location = new System.Drawing.Point(36, 137);
+            this.lb_cfgBehaviour.Name = "lb_cfgBehaviour";
+            this.lb_cfgBehaviour.Size = new System.Drawing.Size(55, 13);
+            this.lb_cfgBehaviour.TabIndex = 15;
+            this.lb_cfgBehaviour.Text = "Behaviour";
             // 
             // VFormConfigs
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.SystemColors.Control;
             this.ClientSize = new System.Drawing.Size(686, 308);
+            this.Controls.Add(this.lb_cfgBehaviour);
             this.Controls.Add(this.lbl_panAlternativeBUser);
             this.Controls.Add(this.pn_CfgAlternativeBAccoun);
             this.Controls.Add(this.lbl_panAlternativeAUser);
@@ -310,30 +321,29 @@
             this.Controls.Add(this.btn_configCancel);
             this.Controls.Add(this.lbl_panDefaultUser);
             this.Controls.Add(this.btn_ConfigSave);
-            this.Controls.Add(this.labelIncrement);
-            this.Controls.Add(this.buttonIncrement);
             this.Controls.Add(this.pn_CfgDefaultAccoun);
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Controls.Add(this.pn_CfgBehaviour);
+            this.Icon = ((System.Drawing.Icon) (resources.GetObject("$this.Icon")));
+            this.Location = new System.Drawing.Point(15, 15);
             this.Name = "VFormConfigs";
-            this.Text = "CNauta | Settings";
             this.pn_CfgDefaultAccoun.ResumeLayout(false);
             this.pn_CfgDefaultAccoun.PerformLayout();
             this.pn_CfgAlternativeAccoun.ResumeLayout(false);
             this.pn_CfgAlternativeAccoun.PerformLayout();
             this.pn_CfgAlternativeBAccoun.ResumeLayout(false);
             this.pn_CfgAlternativeBAccoun.PerformLayout();
+            this.pn_CfgBehaviour.ResumeLayout(false);
+            this.pn_CfgBehaviour.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
+
+        private System.Windows.Forms.Panel pn_CfgBehaviour;
 
         private System.Windows.Forms.TextBox txb_defaultUser;
         private System.Windows.Forms.Label lbl_defaultUser;
         private System.Windows.Forms.TextBox txb_defaultUserPass;
         private System.Windows.Forms.Label lbl_defaultPass;
-
-        private System.Windows.Forms.Button buttonIncrement;
-        private System.Windows.Forms.Label labelIncrement;
 
         #endregion
 
@@ -356,5 +366,7 @@
         private System.Windows.Forms.Label lbl_alternativeBUser;
         private System.Windows.Forms.Label lbl_alternativeBPass;
         private System.Windows.Forms.Button btn_revealAltAPass;
+        private System.Windows.Forms.Label lb_cfgBehaviour;
+        private System.Windows.Forms.CheckBox checkBox1;
     }
 }

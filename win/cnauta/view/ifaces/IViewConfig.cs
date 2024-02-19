@@ -5,14 +5,12 @@ namespace cnauta.view.ifaces
 {
     public interface IViewConfig
     {
-        event EventHandler IncrementChanged;
         event EventHandler EhSaveConfig;
 
-        void InSetIncrementLabel(string value);
         void InSetConfigData(SchConfigData data);
         void InShowErrMsg(string errorMsg);
+        void InCloseConfigsForm();
 
         SchConfigData OutGetConfigData();
-        
     }
 }

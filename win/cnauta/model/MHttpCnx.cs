@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using cnauta.model.extension;
+
 using HtmlAgilityPack;
 
 using cnauta.model.schema;
@@ -19,25 +20,32 @@ namespace cnauta.model
     {
         #region ============ FIELDS ==================================================
 
-        private uint TIMEOUT = 25000;               // milliseconds
+        private uint TIMEOUT = 25000;               // milliseconds (25s)
         
-        private string _csrfhwToken;
+        private string _csrfHwToken;
         private string _logIdToken;
-        private string _UUIDToken;
+        private string _uuidToken;
         
         private CookieContainer _cookies;
         
         #endregion ===================================================================
 
         #region ============ PROPERTIES ==============================================
-
+        
+        public string CsrfHwToken => _csrfHwToken;
+        public string LogIdToken => _logIdToken;
+        public string UUIDToken => _uuidToken;
 
         #endregion ===================================================================
 
         #region ============ CONSTRUCTORS ============================================
 
-        public MHttpCnx()
-        {}
+        public MHttpCnx(string csrfHwToken = "", string LogIdToken = "", string UUIDToken = "")
+        {
+            _csrfHwToken = csrfHwToken;
+            _logIdToken = LogIdToken;
+            _uuidToken = UUIDToken;
+        }
         
         #endregion ===================================================================
 
@@ -71,7 +79,7 @@ namespace cnauta.model
                     var doc = new HtmlDocument();
                     doc.LoadHtml(htmlContent);
 
-                    _csrfhwToken = doc.DocumentNode.SelectSingleNode("//input[@name='CSRFHW']").Attributes["value"].Value;
+                    _csrfHwToken = doc.DocumentNode.SelectSingleNode("//input[@name='CSRFHW']").Attributes["value"].Value;
                     _cookies = new CookieContainer();
                     
                     foreach (var cookie in r.Headers.GetValues("Set-Cookie"))
@@ -92,11 +100,16 @@ namespace cnauta.model
             var wasLandingOk = await Prequel();
             if (!wasLandingOk) throw new InvalidOperationException();
             
-            using (var hClient = new HttpClient(new HttpClientHandler {CookieContainer = _cookies}))
+            using (var hClient = new HttpClient(new HttpClientHandler
+            {
+                CookieContainer = _cookies,
+                AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate       // TIP ! use this ONLY if we are going to set the compressions headers to the client
+            }))
             {
                 hClient.Timeout = TimeSpan.FromMilliseconds(TIMEOUT);
+                mkHeaders(hClient);
                 
-                var r = await hClient.PostAsync(StrsHots.HOST_URL_LOGIN, mkReqData(ucred));
+                var r = await hClient.PostAsync(StrsHots.HOST_URL_LOGIN, mkReqCnxData(ucred));
                 r.EnsureSuccessStatusCode();
                 
                 using (var stream = await r.Content.ReadAsStreamAsync())
@@ -111,7 +124,7 @@ namespace cnauta.model
 
                     if (howWasIt == PLoginResult.OK)
                     {
-                        _UUIDToken = nodes.hlp_GetUUID();
+                        _uuidToken = nodes.hlp_GetUUID();
                     }
                     
                     return howWasIt;
@@ -120,9 +133,43 @@ namespace cnauta.model
         }
 
         /// <summary>
-        /// make (setup) a common captive portal request data
+        /// 
         /// </summary>
-        private FormUrlEncodedContent mkReqData(SchCredential account)
+        /// <param name="ucred"></param>
+        public async Task<bool> TryToDisconnect(SchCredential ucred)
+        {
+            using (var hClient = new HttpClient())
+            {
+                hClient.Timeout = TimeSpan.FromMilliseconds(TIMEOUT);
+                mkHeaders(hClient);
+                
+                var r = await hClient.PostAsync(StrsHots.HOST_URL_LOGOUT, mkReqDisconnectData(ucred));
+                r.EnsureSuccessStatusCode();
+                
+                using (var stream = await r.Content.ReadAsStreamAsync())
+                using (var reader = new StreamReader(stream))
+                {
+                    var htmlContent = await reader.ReadToEndAsync().ConfigureAwait(false);
+                    
+                    if (htmlContent.Length <= 40)
+                        if (htmlContent.Contains("FAILURE"))
+                            return false;
+
+                    return true;
+                }
+            }
+        }
+
+        private void mkHeaders(HttpClient client)
+        {
+            client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) Gecko/20100101 Firefox/102.0");
+            client.DefaultRequestHeaders.Add("Accept-Encoding", "gzip, deflate, br");
+        }
+
+        /// <summary>
+        /// make (setup) a login captive portal request data
+        /// </summary>
+        private FormUrlEncodedContent mkReqCnxData(SchCredential account)
         {
             return new FormUrlEncodedContent(new[]
             {
@@ -137,10 +184,25 @@ namespace cnauta.model
                 new KeyValuePair<string, string>("lang", "es_ES"),
                 new KeyValuePair<string, string>("username", account.User),
                 new KeyValuePair<string, string>("password", account.Pass),
-                new KeyValuePair<string, string>("CSRFHW", _csrfhwToken)
+                new KeyValuePair<string, string>("CSRFHW", _csrfHwToken)
             });
         }
-
+        
+        /// <summary>
+        /// make (setup) a logout portal request data
+        /// </summary>
+        private FormUrlEncodedContent mkReqDisconnectData(SchCredential account)
+        {
+            return new FormUrlEncodedContent(new[]
+            {
+                new KeyValuePair<string, string>("username", account.User),
+                new KeyValuePair<string, string>("ATTRIBUTE_UUID", _uuidToken),
+                new KeyValuePair<string, string>("wlanacname", ""),
+                new KeyValuePair<string, string>("domain", ""),
+                new KeyValuePair<string, string>("remove", "1"),
+                new KeyValuePair<string, string>("loggerId", $"{_logIdToken}+{account.User}"),
+            });
+        } 
 
         #endregion ===================================================================
     }

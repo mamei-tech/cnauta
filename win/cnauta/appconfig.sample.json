@@ -6,5 +6,11 @@
   "AltAUSerPass": "userpass",
 
   "AltBUSer": "userb@domain.cu",
-  "AltBUSerPass": "userpass"
+  "AltBUSerPass": "userpass",
+
+  "LogIdToken": "",
+  "UuidToken": "",
+  "CsrfHwToken": "",
+
+  "AreWeConnected": "false"
 }

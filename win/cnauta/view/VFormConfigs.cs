@@ -11,6 +11,9 @@ namespace cnauta.view
     {
         #region ============ FIELDS ==================================================
 
+        /// <summary>Configuration data. It must be filled with the configuration coming form the config file</summary>
+        private SchConfigData _config;                                                
+
         #endregion ===================================================================
 
         #region ============ PROPERTY FIELDS =========================================
@@ -18,7 +21,6 @@ namespace cnauta.view
 
         #region ============ DELEGATES ===============================================
 
-        public event EventHandler IncrementChanged;
         public event EventHandler EhSaveConfig;
 
         #endregion ===================================================================
@@ -28,6 +30,10 @@ namespace cnauta.view
         public VFormConfigs()
         {
             InitializeComponent();
+
+            FormBorderStyle = FormBorderStyle.FixedSingle;
+            MinimizeBox = false;
+            MaximizeBox = false;
         }
 
         #endregion ===================================================================
@@ -37,11 +43,12 @@ namespace cnauta.view
 
         #region ============ INTERFACE & METHODS =====================================
 
-        public void InSetIncrementLabel(string value)
+        /// <summary>Clos the formulary</summary>
+        public void InCloseConfigsForm()
         {
-            this.labelIncrement.Text = value;
+            Close();
         }
-        
+
         /// <summary>
         /// Set the configuration [data] in to the windows form controls (GUI) 
         /// </summary>
@@ -54,15 +61,17 @@ namespace cnauta.view
                 MessageBox.Show(Strs.MSG_E_CONFIG_NOT_LOAD, Strs.MSG_E, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
+            
+            _config = data;
 
-            if (!String.IsNullOrEmpty(data.DefaultUser)) txb_defaultUser.Text = data.DefaultUser;
-            if (!String.IsNullOrEmpty(data.DefaultUserPass)) txb_defaultUserPass.Text = data.DefaultUserPass;
+            if (!String.IsNullOrEmpty(_config.DefaultUser)) txb_defaultUser.Text = _config.DefaultUser;
+            if (!String.IsNullOrEmpty(_config.DefaultUserPass)) txb_defaultUserPass.Text = _config.DefaultUserPass;
 
-            if (!String.IsNullOrEmpty(data.AltAUSer)) txb_alternativeAUser.Text = data.AltAUSer;
-            if (!String.IsNullOrEmpty(data.AltAUSerPass)) txb_alternativeAUserPass.Text = data.AltAUSerPass;
+            if (!String.IsNullOrEmpty(_config.AltAUSer)) txb_alternativeAUser.Text = _config.AltAUSer;
+            if (!String.IsNullOrEmpty(_config.AltAUSerPass)) txb_alternativeAUserPass.Text = _config.AltAUSerPass;
 
-            if (!String.IsNullOrEmpty(data.AltBUSer)) txb_alternativeBUser.Text = data.AltBUSer;
-            if (!String.IsNullOrEmpty(data.AltBUSerPass)) txb_alternativeBUserPass.Text = data.AltBUSerPass;
+            if (!String.IsNullOrEmpty(_config.AltBUSer)) txb_alternativeBUser.Text = _config.AltBUSer;
+            if (!String.IsNullOrEmpty(_config.AltBUSerPass)) txb_alternativeBUserPass.Text = _config.AltBUSerPass;
         }
 
         /// <summary>
@@ -76,25 +85,34 @@ namespace cnauta.view
 
         /// <summary>
         /// Retrieve the a configuration schema object obtaining the data from the proper Windows Form Control 
-        /// </summary>
+        /// </summary>  
         /// <returns>Configuration data object</returns>
         public SchConfigData OutGetConfigData()
         {
             return new SchConfigData
             {
                 DefaultUser = txb_defaultUser.Text,
-                DefaultUserPass = txb_defaultUserPass.Text
+                DefaultUserPass = txb_defaultUserPass.Text,
+                
+                AltAUSer = txb_alternativeAUser.Text,
+                AltAUSerPass = txb_alternativeAUserPass.Text,
+                
+                AltBUSer = txb_alternativeBUser.Text,
+                AltBUSerPass = txb_alternativeBUserPass.Text,
+                
+                // passing the previously given config data, so we don't mess the config file. As if pass only the data user in the form, SchConfigData will have null in some fields and the json file will not be write (saved) properly.
+                
+                UuidToken = _config.UuidToken,
+                CsrfHwToken = _config.CsrfHwToken,
+                LogIdToken = _config.LogIdToken,
+                ActiveAccount = _config.ActiveAccount,
+                AreWeConnected = _config.AreWeConnected,
             };
         }
 
         #endregion ===================================================================
 
         #region ============ EVENTS ==================================================
-        
-        private void buttonIncrement_Click(object sender, EventArgs e)
-        {
-            this.IncrementChanged?.Invoke(this, EventArgs.Empty);
-        }
 
         /// <summary>
         /// Calling the controller to invoke the action.
@@ -110,17 +128,19 @@ namespace cnauta.view
                 return;
             }
             
-            this.EhSaveConfig?.Invoke(this, e);
+            EhSaveConfig?.Invoke(this, e);
         }
 
         #endregion ===================================================================
 
-        #region ============ LOCAL MOD HANDLERS ======================================
-        
+        #region ============ LOCAL EVENTS HANDLERS ===================================
+
         /// <summary>
         /// Hide / un-hide the password present in the correspondent text box  
         /// </summary>
-        private void btn_revealDefaultPass_Click(object sender, EventArgs e)
+        /// <param name="__">Sender object (eg. a windows form control)</param>
+        /// <param name="_">event arguments</param>
+        private void btn_revealDefaultPass_Click(object __, EventArgs _)
         {
             if (txb_defaultUserPass.PasswordChar == Strs.PAS_HIDE) txb_defaultUserPass.PasswordChar = Strs.PAS_SHOW;
             else txb_defaultUserPass.PasswordChar = Strs.PAS_HIDE;
@@ -129,7 +149,9 @@ namespace cnauta.view
         /// <summary>
         /// Hide / un-hide the password present in the correspondent text box  
         /// </summary>
-        private void btn_revealAltAPass_Click(object sender, EventArgs e)
+        /// <param name="__">Sender object (eg. a windows form control)</param>
+        /// <param name="_">event arguments</param>
+        private void btn_revealAltAPass_Click(object __, EventArgs _)
         {
             if (txb_alternativeAUserPass.PasswordChar == Strs.PAS_HIDE) txb_alternativeAUserPass.PasswordChar = Strs.PAS_SHOW;
             else txb_alternativeAUserPass.PasswordChar = Strs.PAS_HIDE;
@@ -138,14 +160,24 @@ namespace cnauta.view
         /// <summary>
         /// Hide / un-hide the password present in the correspondent text box  
         /// </summary>
-        private void btn_revealAltBPass_Click(object sender, EventArgs e)
+        /// <param name="__">Sender object (eg. a windows form control)</param>
+        /// <param name="_">event arguments</param>
+        private void btn_revealAltBPass_Click(object __, EventArgs _)
         {
             if (txb_alternativeBUserPass.PasswordChar == Strs.PAS_HIDE) txb_alternativeBUserPass.PasswordChar = Strs.PAS_SHOW;
             else txb_alternativeBUserPass.PasswordChar = Strs.PAS_HIDE;
+        }
+        
+        /// <param name="__"></param>
+        /// <param name="_"></param>
+        private void btn_configCancel_Click(object __, EventArgs _)
+        {
+            InCloseConfigsForm();
         }
 
         #endregion ===================================================================
 
 
+        
     }
 }

@@ -18,7 +18,7 @@ namespace cnauta
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            var mainView = new VMainMenuCxt();
+            var mainView = new VMainMenu();          // VMainMenu is an application context used as conceptual view
             var _ = new CMainMenu(mainView);
 
             Application.Run(mainView);

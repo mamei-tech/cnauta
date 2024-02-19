@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 using Newtonsoft.Json;
 
@@ -14,20 +15,24 @@ namespace cnauta.model
     {
         #region ============ FIELDS ==================================================
 
-        private SchConfigData _config;
+        /// <summary>Configuration private field</summary>
+        private SchConfigData _cfg;
 
         #endregion ===================================================================
 
         #region ============ PROPERTIES ==============================================
 
-        public SchConfigData Config { get => _config; }
+        /// <summary>Configuration access property</summary>
+        public SchConfigData Cfg => _cfg;
 
         #endregion ===================================================================
 
         #region ============ CONSTRUCTORS ============================================
 
-        public MConfigMgr()
-        {}
+        public MConfigMgr(bool doWeNeed2Load = false)
+        {
+            if (doWeNeed2Load) LoadConfig();
+        }
         
         #endregion ===================================================================
 
@@ -44,8 +49,8 @@ namespace cnauta.model
 
             var json = File.ReadAllText(Strs.CONFIG_FILE);
 
-            _config = JsonConvert.DeserializeObject<SchConfigData>(json);
-            return _config;
+            _cfg = JsonConvert.DeserializeObject<SchConfigData>(json);
+            return _cfg;
         }
 
         /// <summary>
@@ -64,12 +69,61 @@ namespace cnauta.model
 
             if (configData != null)
                 json = JsonConvert.SerializeObject(configData, Formatting.Indented);
-            else if (_config != null)
-                json = JsonConvert.SerializeObject(_config, Formatting.Indented);
+            else if (_cfg != null)
+                json = JsonConvert.SerializeObject(_cfg, Formatting.Indented);
             else return false;
 
             File.WriteAllText(Strs.CONFIG_FILE, json);            
             return true;
+        }
+
+        /// <summary>
+        /// Updates an existing configuration key without losing the other configs in the json file.
+        /// </summary>
+        /// <param name="key">The key to update</param>
+        /// <param name="value">The new value for the key</param>
+        /// <param name="want2Save"></param>
+        public void UpdateKey(string key, string value, bool want2Save = false)
+        {
+            if (_cfg == null) return;
+            switch (key)
+            {
+                case nameof(_cfg.DefaultUser):
+                    _cfg.DefaultUser = value;
+                    break;
+                case nameof(_cfg.DefaultUserPass):
+                    _cfg.DefaultUserPass = value;
+                    break;
+                case nameof(_cfg.AltAUSer):
+                    _cfg.AltAUSer = value;
+                    break;
+                case nameof(_cfg.AltAUSerPass):
+                    _cfg.AltAUSerPass = value;
+                    break;
+                case nameof(_cfg.AltBUSer):
+                    _cfg.AltBUSer = value;
+                    break;
+                case nameof(_cfg.AltBUSerPass):
+                    _cfg.AltBUSerPass = value;
+                    break;
+                case nameof(_cfg.LogIdToken):
+                    _cfg.LogIdToken = value;
+                    break;
+                case nameof(_cfg.CsrfHwToken):
+                    _cfg.CsrfHwToken = value;
+                    break;
+                case nameof(_cfg.UuidToken):
+                    _cfg.UuidToken = value;
+                    break;
+                case nameof(_cfg.ActiveAccount):
+                    _cfg.ActiveAccount = Int32.Parse(value); 
+                    break;
+                case nameof(_cfg.AreWeConnected):
+                    _cfg.AreWeConnected = Boolean.Parse(value); 
+                    break;
+            }
+            
+            if (want2Save) SaveConfig();
         }
 
         #endregion ===================================================================

@@ -56,6 +56,7 @@
   <ItemGroup>
     <Compile Include="controller\CConfig.cs" />
     <Compile Include="controller\CMainMenu.cs" />
+    <Compile Include="controller\globalHandlers\GhKeyHandler.cs" />
     <Compile Include="model\extension\MHttpCnxExt.cs" />
     <Compile Include="model\MHttpCnx.cs" />
     <Compile Include="model\MConfigMgr.cs" />
@@ -66,7 +67,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Lib.cs" />
     <Compile Include="view\ifaces\IViewMainMenuCtx.cs" />
-    <Compile Include="view\VMainMenuCxt.cs" />
+    <Compile Include="view\VMainMenu.cs" />
     <Compile Include="view\VFormConfigs.cs">
       <SubType>Form</SubType>
     </Compile>

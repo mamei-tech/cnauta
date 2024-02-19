@@ -24,12 +24,11 @@ namespace cnauta.controller
         {
             _view = view;
             _mNumber = new MNumber();
-            _mCfgMgr = new MConfigMgr();
+            _mCfgMgr = new MConfigMgr(true);
 
-            _view.IncrementChanged += VActionIncrementChanged;
             _view.EhSaveConfig += VActionSaveConfig;
             
-            _view.InSetConfigData(_mCfgMgr.LoadConfig());
+            _view.InSetConfigData(_mCfgMgr.Cfg);
         }
 
         #endregion ===================================================================
@@ -46,12 +45,8 @@ namespace cnauta.controller
         {            
             var wasOk = _mCfgMgr.SaveConfig(_view.OutGetConfigData());
             if (!wasOk) _view.InShowErrMsg(Strs.MSG_E_CONFIG_NOT_SAVED);
-        }
-
-        private void VActionIncrementChanged(object sender, EventArgs e)
-        {
-            _mNumber.Increment();
-            _view.InSetIncrementLabel(_mNumber.ToString());
+            
+            _view.InCloseConfigsForm();
         }
 
         #endregion ===================================================================

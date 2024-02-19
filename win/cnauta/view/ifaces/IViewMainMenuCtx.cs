@@ -14,13 +14,15 @@ namespace cnauta.view.ifaces
         
         event EventHandler EhExit;
         event EventHandler EhConnect;
+        event EventHandler EhDisconnect;
+        event EventHandler EhComputeCfg;
         event EventHandler EhOpenSettings;
-        event EventHandler EhLoadAccountSelect;
 
         void InSetAccountInMenu(SchConfigData data);
         void InSetCloseTrayMenu();
         void InShowMsg(string errorMsg, string caption = Strs.MSG_E, MessageBoxIcon icon = MessageBoxIcon.Error);
-        Task InShowReqSts(CancellationToken tk, string cText = StrMenu.M_STATUS);
+        Task InSetReqSts(CancellationToken tk, string cText = StrMenu.M_STATUS_DISCONNECTED);
+        void InSetConnSts(bool force2Connect = false, int accIndex = -1);
         
         SchCredential OutGetActiveAccount();
     }

@@ -15,10 +15,13 @@ namespace cnauta
         public const string MSG_E_CONFIG_NOT_LOAD = "Could not load configuration file";
         public const string MSG_E_CONFIG_NOT_SAVED = "Could not save configuration file";
         public const string MSG_E_CANNOT_REQUEST = "Request unsucessfully. Connection not stablished";
+        public const string MSG_E_CANNOT_DISCONX = "Servers says can't disconnect. Please, wait a fews seconds and retry.";
+        public const string MSG_E_FORCE_DISCNX_INFO = "Servers says can't disconnect again... But we are setting the app up to disconnection state anyways.";
         public const string MSG_E_TIMEOUT = "No response from server, timeout exceeded so task was canceled.";
         public const string MSG_E_RARE_HTML = "Server response an unespected HTML content.";
         public const string MSG_E_LANDING_PAGE_FAIL = "Landing page unreachable or invalid.";
-        public const string MSG_I_ACCOUNT_SELECTION = "Please, select an account to use in the connection";
+        public const string MSG_I_ACCOUNT_SELECTION = "Please, select a cnx account to be used";
+        public const string MSG_I_ACCOUNT_INVALID_INDEX = "Index seems invalid";
 
         public const char PAS_HIDE = '*'; 
         public const char PAS_SHOW = '\0';
@@ -57,17 +60,21 @@ namespace cnauta
     /// <summary>Static Menus string definitions</summary>
     static class StrMenu
     {
-        public const string M_STATUS = "        ▪ Standby ▪ ";
+        public const string M_DEFAULT_TIME = "     00:00";
+        
         public const string M_CNX = "⚡ Connect";
-        public const string M_DCNX = "🕳 Disconnect";
+        public const string M_DCNX = "❌ Disconnect";
+        public const string M_STATUS_DISCONNECTED = "    ⚫ Disconnected ";
+        public const string M_STATUS_CONNECTED = "     🟢 Connected ";
 
         public const string M_TOOLS = "⛏ Tools";
+        public const string M_TOOLS_CHK_STATUS = "Chk Status";
         public const string M_TOOLS_AUTOCONX = "Auto Connect";
         public const string M_TOOLS_AUTODISCONX = "Auto Disconnect";
 
         public const string M_ACCOUNT = "💳 Active Account";
         public const string M_SETTINGS = "⚙ Settings";
-        public const string M_EXIT = "🔚 Exit";
+        public const string M_EXIT = "🔚 Exit  (or ESC 2 hide)";
     }
 
 }
