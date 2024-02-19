@@ -28,6 +28,11 @@ namespace cnauta.model.schema
         /// 2 => B
         /// </remarks>
         public int ActiveAccount { get; set; }
+        
+        /// <summary>
+        /// Tells the app to close it after the connection is established 
+        /// </summary>
+        public bool ExitWhenConnect { get; set; }
     }
 }
 

@@ -121,6 +121,9 @@ namespace cnauta.model
                 case nameof(_cfg.AreWeConnected):
                     _cfg.AreWeConnected = Boolean.Parse(value); 
                     break;
+                case nameof(_cfg.ExitWhenConnect):
+                    _cfg.AreWeConnected = Boolean.Parse(value);
+                    break;
             }
             
             if (want2Save) SaveConfig();

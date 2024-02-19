@@ -139,6 +139,14 @@ namespace cnauta.controller
                     config.UpdateKey(nameof(SchConfigData.CsrfHwToken), cnx.CsrfHwToken);
                     config.UpdateKey(nameof(SchConfigData.LogIdToken), cnx.LogIdToken, true);
 
+                    if (config.Cfg.ExitWhenConnect)                  // !!!!!
+                    {
+                        _view.InNotify(Strs.MSG_NTF_CONNECTED, Strs.MSG_NTF_CONNECTED_DSC);
+                        await Task.Delay(1000);
+                        VActionExit(null, null);
+                        return;
+                    }
+
                     _view.InSetConnSts();
                     _view.InSetCloseTrayMenu();                         // closing the menu
                 }

@@ -54,7 +54,7 @@
             this.lbl_alternativeBUser = new System.Windows.Forms.Label();
             this.lbl_alternativeBPass = new System.Windows.Forms.Label();
             this.pn_CfgBehaviour = new System.Windows.Forms.Panel();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.ckb_ExitWhenCnx = new System.Windows.Forms.CheckBox();
             this.lb_cfgBehaviour = new System.Windows.Forms.Label();
             this.pn_CfgDefaultAccoun.SuspendLayout();
             this.pn_CfgAlternativeAccoun.SuspendLayout();
@@ -282,21 +282,21 @@
             // pn_CfgBehaviour
             // 
             this.pn_CfgBehaviour.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pn_CfgBehaviour.Controls.Add(this.checkBox1);
+            this.pn_CfgBehaviour.Controls.Add(this.ckb_ExitWhenCnx);
             this.pn_CfgBehaviour.Location = new System.Drawing.Point(21, 144);
             this.pn_CfgBehaviour.Name = "pn_CfgBehaviour";
             this.pn_CfgBehaviour.Size = new System.Drawing.Size(641, 112);
             this.pn_CfgBehaviour.TabIndex = 14;
             // 
-            // checkBox1
+            // ckb_ExitWhenCnx
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(18, 24);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(135, 17);
-            this.checkBox1.TabIndex = 0;
-            this.checkBox1.Text = "Exit app when connect";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.ckb_ExitWhenCnx.AutoSize = true;
+            this.ckb_ExitWhenCnx.Location = new System.Drawing.Point(18, 24);
+            this.ckb_ExitWhenCnx.Name = "ckb_ExitWhenCnx";
+            this.ckb_ExitWhenCnx.Size = new System.Drawing.Size(135, 17);
+            this.ckb_ExitWhenCnx.TabIndex = 0;
+            this.ckb_ExitWhenCnx.Text = "Exit app when connect";
+            this.ckb_ExitWhenCnx.UseVisualStyleBackColor = true;
             // 
             // lb_cfgBehaviour
             // 
@@ -323,7 +323,7 @@
             this.Controls.Add(this.btn_ConfigSave);
             this.Controls.Add(this.pn_CfgDefaultAccoun);
             this.Controls.Add(this.pn_CfgBehaviour);
-            this.Icon = ((System.Drawing.Icon) (resources.GetObject("$this.Icon")));
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Location = new System.Drawing.Point(15, 15);
             this.Name = "VFormConfigs";
             this.pn_CfgDefaultAccoun.ResumeLayout(false);
@@ -336,6 +336,7 @@
             this.pn_CfgBehaviour.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
+
         }
 
         private System.Windows.Forms.Panel pn_CfgBehaviour;
@@ -367,6 +368,6 @@
         private System.Windows.Forms.Label lbl_alternativeBPass;
         private System.Windows.Forms.Button btn_revealAltAPass;
         private System.Windows.Forms.Label lb_cfgBehaviour;
-        private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.CheckBox ckb_ExitWhenCnx;
     }
 }

@@ -12,5 +12,7 @@
   "UuidToken": "",
   "CsrfHwToken": "",
 
-  "AreWeConnected": "false"
+  "AreWeConnected": "false",
+  "ActiveAccount": -1,
+  "ExitWhenConnect": "false"
 }

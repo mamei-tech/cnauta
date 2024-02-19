@@ -72,6 +72,8 @@ namespace cnauta.view
 
             if (!String.IsNullOrEmpty(_config.AltBUSer)) txb_alternativeBUser.Text = _config.AltBUSer;
             if (!String.IsNullOrEmpty(_config.AltBUSerPass)) txb_alternativeBUserPass.Text = _config.AltBUSerPass;
+
+            ckb_ExitWhenCnx.Checked = _config.ExitWhenConnect;
         }
 
         /// <summary>
@@ -93,12 +95,14 @@ namespace cnauta.view
             {
                 DefaultUser = txb_defaultUser.Text,
                 DefaultUserPass = txb_defaultUserPass.Text,
-                
+
                 AltAUSer = txb_alternativeAUser.Text,
                 AltAUSerPass = txb_alternativeAUserPass.Text,
-                
+
                 AltBUSer = txb_alternativeBUser.Text,
                 AltBUSerPass = txb_alternativeBUserPass.Text,
+
+                ExitWhenConnect = ckb_ExitWhenCnx.Checked,
                 
                 // passing the previously given config data, so we don't mess the config file. As if pass only the data user in the form, SchConfigData will have null in some fields and the json file will not be write (saved) properly.
                 
@@ -176,8 +180,5 @@ namespace cnauta.view
         }
 
         #endregion ===================================================================
-
-
-        
     }
 }
