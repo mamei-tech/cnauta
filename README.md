@@ -16,13 +16,13 @@ _In Cuba, there is only one ISP that offers home internet service (Nauta Hogar),
 
 **solución** / **we got u cover**
 
-##CNauta
+## CNauta
 
 ![](https://img.shields.io/badge/build-passing-brightgreen?style=flat)
 ![](https://img.shields.io/badge/release-v0.0.0-inactive?style=flat)
 ![](https://img.shields.io/badge/reposize-0MB-inactive?style=flat)
 
-###Features:
+### Features:
 
 - Gestión de hasta 3 cuentas de acceso
 - Salva del estado de confección independientemente si el programa está en ejecución o no.
@@ -42,7 +42,7 @@ _In Cuba, there is only one ISP that offers home internet service (Nauta Hogar),
 - _Elapsed time timer_
 - _Account status check_
 
-###implementaciones / implementations:
+### implementaciones / implementations:
 
 - ### 🐍 [Python](./multiplatform/python)
 - ### #️⃣ [C#](./win/cnauta)
