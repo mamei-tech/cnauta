@@ -19,8 +19,8 @@ _In Cuba, there is only one ISP that offers home internet service (Nauta Hogar),
 ## CNauta
 
 ![](https://img.shields.io/badge/build-passing-brightgreen?style=flat)
-![](https://img.shields.io/badge/release-v0.0.0-inactive?style=flat)
-![](https://img.shields.io/badge/reposize-0MB-inactive?style=flat)
+![](https://img.shields.io/badge/release-v0.2.1-inactive?style=flat)
+![](https://img.shields.io/badge/reposize-3.4MB-inactive?style=flat)
 
 ### Features:
 
