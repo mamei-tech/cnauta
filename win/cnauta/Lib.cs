@@ -1,4 +1,6 @@
 ﻿
+using System;
+
 namespace cnauta
 {
     /// <summary>Static common string definitions</summary>
@@ -30,7 +32,7 @@ namespace cnauta
         public const string MSG_NTF_DISCONNECTED_DSC = "connection was terminated";
         public const string MSG_NTF_ACC_STS = "Account balance";
         public const string MSG_NTF_ACC_STS_FAIL = "can't get the data";
-        public const string MSG_NTF_ACC_STS_DATA = "balance: {0}\nhours: {1}";
+        public const string MSG_NTF_ACC_STS_DATA = "balance: {0} CUP\nhours: {1}";
 
         public const char PAS_HIDE = '*'; 
         public const char PAS_SHOW = '\0';
@@ -66,11 +68,12 @@ namespace cnauta
         public static readonly string HOST_URL_LOGOUT = $"{HOST_URL}/LogoutServlet";
     }
 
-    /// <summary>Static Menus string definitions</summary>
+    /// <summary>Static Menus string definitions</summary>                       
     static class StrMenu
     {
-        public const string M_DEFAULT_TIME = "     00:00";
-        
+        public const string TM_Placeholder = "--";
+        public static string M_DEFAULT_TIME = "   {0}:{1}   -   {2}:{3}";
+
         public const string M_CNX = "⚡ Connect";
         public const string M_DCNX = "❌ Disconnect";
         public const string M_STATUS_DISCONNECTED = "    ⚫ Disconnected ";
@@ -84,6 +87,28 @@ namespace cnauta
         public const string M_ACCOUNT = "💳 Active Account";
         public const string M_SETTINGS = "⚙ Settings";
         public const string M_EXIT = "🔚 Exit  (or ESC 2 hide)";
+
+        /// <summary>
+        /// Retrieve the default time information using the placeholders 
+        /// </summary>
+        /// <returns>--:--   -   --:--</returns>
+        public static string FormatTimeInfo()
+        {
+            return String.Format(M_DEFAULT_TIME, TM_Placeholder, TM_Placeholder, TM_Placeholder, TM_Placeholder);
+        }
+
+        /// <summary>
+        /// Retrieve a formatted time information using the given information
+        /// </summary>
+        /// <param name="TmLeftHH">time left - hours</param>
+        /// <param name="TmLeftMM">time left - minutes</param>
+        /// <param name="TmElapsedHH">time elapsed - hours</param>
+        /// <param name="tmElapsedMM">time elapsed - minutes</param>
+        /// <returns>03:25   -   01:35</returns>
+        public static string FormatTimeInfo(string TmLeftHH, string TmLeftMM, string TmElapsedHH, string tmElapsedMM)
+        {
+            return String.Format(M_DEFAULT_TIME, TmLeftHH, TmLeftMM, TmElapsedHH, tmElapsedMM);
+        }
     }
 
 }

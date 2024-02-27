@@ -199,6 +199,32 @@ namespace cnauta.model
             }
         }
 
+        /// <summary>
+        /// Make a request to the server to get the account available cnx time left 
+        ///  </summary>
+        /// <param name="ucred">User credential, account data so the user can be disconnected to the captive portal</param>
+        /// <returns></returns>
+        public async Task<string[]> TryToGetTmLeft(SchCredential ucred)
+        {
+            using (var hClient = new HttpClient())
+            {
+                hClient.Timeout = TimeSpan.FromMilliseconds(TIMEOUT);
+                mkHeaders(hClient);
+                
+                var r = await hClient.PostAsync(StrsHots.HOST_URL_QUERY, mkReqTmLeftData(ucred));
+                r.EnsureSuccessStatusCode();
+                
+                using (var stream = await r.Content.ReadAsStreamAsync())
+                using (var reader = new StreamReader(stream))
+                {
+                    var htmlContent = await reader.ReadToEndAsync().ConfigureAwait(false);
+                    var tlStr = htmlContent.Split(':');
+
+                    return tlStr.Length == 3 ? tlStr : new string[] { };
+                }
+            }
+        }
+
         private void mkHeaders(HttpClient client)
         {
             client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) Gecko/20100101 Firefox/102.0");
@@ -234,11 +260,30 @@ namespace cnauta.model
         {
             return new FormUrlEncodedContent(new[]
             {
-                new KeyValuePair<string, string>("username", account.User),
+                new KeyValuePair<string, string>("username", account.User), 
                 new KeyValuePair<string, string>("ATTRIBUTE_UUID", _uuidToken),
                 new KeyValuePair<string, string>("wlanacname", ""),
                 new KeyValuePair<string, string>("domain", ""),
                 new KeyValuePair<string, string>("remove", "1"),
+                new KeyValuePair<string, string>("loggerId", $"{_logIdToken}+{account.User}"),
+            });
+        }
+        
+        /// <summary>
+        /// Crete the request payload data for getting the account cnx time left 
+        /// </summary>
+        private FormUrlEncodedContent mkReqTmLeftData(SchCredential account)
+        {
+            return new FormUrlEncodedContent(new[]
+            {
+                new KeyValuePair<string, string>("ATTRIBUTE_UUID", _uuidToken),
+                new KeyValuePair<string, string>("wlanacname", ""),
+                new KeyValuePair<string, string>("wlanmac", ""),
+                new KeyValuePair<string, string>("username", account.User),
+                new KeyValuePair<string, string>("CSRFHW", _csrfHwToken),
+                new KeyValuePair<string, string>("domain", ""),
+                new KeyValuePair<string, string>("ssid", ""),
+                new KeyValuePair<string, string>("op", "getLeftTime"),
                 new KeyValuePair<string, string>("loggerId", $"{_logIdToken}+{account.User}"),
             });
         } 

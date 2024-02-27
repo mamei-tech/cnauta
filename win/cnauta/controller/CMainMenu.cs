@@ -69,17 +69,19 @@ namespace cnauta.controller
             
             try
             {
-                var wasOk = await cnx.TryToDisconnect(credential);                                         // requesting connection
-                hlp_SendStopSig();                                                                         // send a termination signal to remove the requesting indicator status on the view
-                _view.InSetCloseTrayMenu();
-
-                if (_dCnxAttempts > 2 && !wasOk)
+                if (_dCnxAttempts > 2)
                 {
                     _dCnxAttempts = 0;
                     _view.InShowMsg(Strs.MSG_E_FORCE_DISCNX_INFO, Strs.MSG_W, MessageBoxIcon.Information);
 
+                    hlp_SendStopSig();
                     goto setting_up_disconnect_state;
                 }
+                
+                var wasOk = await cnx.TryToDisconnect(credential);                                    // requesting connection
+                hlp_SendStopSig();                                                                         // send a termination signal to remove the requesting indicator status on the view
+                _view.InSetCloseTrayMenu();
+
                 if (!wasOk)
                 {
                     ++_dCnxAttempts;
@@ -96,7 +98,7 @@ namespace cnauta.controller
                 config.UpdateKey(nameof(SchConfigData.UuidToken), cnx.UUIDToken);
                 config.UpdateKey(nameof(SchConfigData.LogIdToken), String.Empty, true);
                         
-                _view.InSetConnSts();
+                _view.InToggleCnxSts();
             }
             catch (HttpRequestException) { hlp_HandleConnectExp(Strs.MSG_E_CANNOT_REQUEST, true); }
             catch (TaskCanceledException) { hlp_HandleConnectExp(Strs.MSG_E_TIMEOUT, true); }
@@ -149,8 +151,10 @@ namespace cnauta.controller
                         return;
                     }
 
-                    _view.InSetConnSts();
-                    _view.InSetCloseTrayMenu();                       // closing the menu
+                    GetTimeLeft(credential);                         // getting account available time left from the server
+
+                    _view.InToggleCnxSts();
+                    _view.InSetCloseTrayMenu();                      // closing the menu
                 }
             }
             catch (HttpRequestException) { hlp_HandleConnectExp(Strs.MSG_E_CANNOT_REQUEST, false);  }
@@ -166,7 +170,7 @@ namespace cnauta.controller
         private async void VActionChkSts(object __, EventArgs ___)
         {
             var credential = _view.OutGetActiveAccount();
-            if (credential == null)
+            if (credential is null)
             {
                 _view.InShowMsg(Strs.MSG_I_ACCOUNT_SELECTION, Strs.MSG_I, MessageBoxIcon.Information);
                 return;
@@ -189,6 +193,8 @@ namespace cnauta.controller
 
                 var divider = credential.User.Contains("com.cu") ? 12.5 : 2.5;
                 _view.InNotify(Strs.MSG_NTF_ACC_STS, String.Format(Strs.MSG_NTF_ACC_STS_DATA, balance.ToString(CultureInfo.InvariantCulture),  balance / divider));
+                
+                GetTimeLeft(credential);                                 // getting account available time left from the server
             }
             catch (HttpRequestException) { hlp_HandleConnectExp(Strs.MSG_E_CANNOT_REQUEST, true);  }
             catch (TaskCanceledException) { hlp_HandleConnectExp(Strs.MSG_E_TIMEOUT, true); }
@@ -253,9 +259,41 @@ namespace cnauta.controller
             
             _view.InSetAccountsInMenu(config);
             if (config.AreWeConnected)
-                _view.InSetConnSts(true, config.ActiveAccount);
+                _view.InToggleCnxSts(true, config.ActiveAccount);
         }
         
+        #endregion ===================================================================
+        
+        #region ============ HELPERS =================================================
+
+        /// <summary>
+        /// Tries to get the account available cnx time left from the server
+        /// </summary>
+        /// <param name="uCred">User credential, account data so the user can be disconnected to the captive portal</param>
+        private async void GetTimeLeft(SchCredential uCred)
+        {
+            if (uCred is null)
+            {
+                _view.InShowMsg(Strs.MSG_I_ACCOUNT_SELECTION, Strs.MSG_I, MessageBoxIcon.Information);
+                return;
+            }
+            
+            var config = new MConfigMgr(true);
+            var cnx = new MHttpCnx(config.Cfg.CsrfHwToken,  config.Cfg.LogIdToken, config.Cfg.UuidToken);
+            
+            try
+            {
+                var tl = await cnx.TryToGetTmLeft(uCred);                      // requesting connection | tl = time left
+                if(tl.Length == 3) 
+                    _view.InUpdateTimeLeft(tl[0], tl[1]);
+            }
+            catch (HttpRequestException) { }
+            catch (TaskCanceledException) { }
+            catch (ArgumentNullException) { }
+            catch (InvalidOperationException) { }
+            catch (Exception) { }
+        }
+
         #endregion ===================================================================
         
         #region ============ HELPERS =================================================
@@ -303,13 +341,15 @@ namespace cnauta.controller
         /// Just group and encapsulate a few instruction
         /// </summary>
         /// <param name="msg">Message to be displayed on the message box</param>
-        /// /// <param name="fromCxnSts">To know if caller comming from connected status</param>
+        /// <param name="fromCxnSts">To know if caller coming from connected status</param>
         private void hlp_HandleConnectExp(string msg, bool fromCxnSts)
         {
             hlp_SendStopSig();                                  // send a termination signal to remove the requesting indicator status on the view
             _view.InSetCloseTrayMenu();                         // closing the menu
             _view.InShowMsg(msg);                               // showing msg alert
             _view.InSetRecoverSts(fromCxnSts);                  // restore the status indicator text & color, depending on the origin situation
+
+            if (fromCxnSts) _dCnxAttempts++;
         }
 
         #endregion ===================================================================

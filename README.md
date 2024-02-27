@@ -1,8 +1,8 @@
-En cuba existe un único ISP. A suscribirte a su servicio de internet en el hogar (Nauta Hogar), puedes acceder a internet a través de un portal [web] cautivo por una cantidad de horas determinada. En consecuencia, acceder a internet implica, generalmente, man
+En cuba existe un único ISP. A suscribirte a su servicio de internet en el hogar (Nauta Hogar), puedes acceder a internet a través de un portal [web] cautivo por una cantidad de horas determinada. En consecuencia, acceder a internet implica, generalmente, mantener el navegador abierto luego de hacer login en el portal, ya que en caso de cerrarlo se corre el riesgo de no poder cerrar la sesión de navegación. 
 
 ```en```
 
-_In Cuba, there is only one ISP that offers home internet service (Nauta Hogar), which provides access to the internet through a captive web portal for a limited number of hours._
+_In Cuba, there is only one ISP that offers home internet service (Nauta Hogar), which provides access to the internet through a captive web portal for a limited number of hours. Consequently, accessing the Internet generally involves keeping the browser open after logging in to the portal, since closing it may result in the risk of not being able to close the browsing session._
 
 **pero** / **but**
 
