@@ -25,6 +25,9 @@ namespace cnauta.view
         private string _activeP;                // active password
         private int _activeAccI;                // active account index
 
+        private string _tmHH;                   // account time-left hours  
+        private string _tmMM;                   // account time-left minutes
+
         private System.Windows.Forms.Timer _timer;
         private DateTime _startTime;
         
@@ -57,6 +60,9 @@ namespace cnauta.view
             _flagAreConnected = connected;
             _activeU = "";
             _activeP = "";
+
+            _tmHH = StrMenu.TM_Placeholder;
+            _tmMM = StrMenu.TM_Placeholder;
         }
         
         #endregion ===================================================================
@@ -85,7 +91,7 @@ namespace cnauta.view
                     new ToolStripMenuItem()
                     {
                         Enabled = false,
-                        Text = StrMenu.M_DEFAULT_TIME,
+                        Text = StrMenu.FormatTimeInfo(),
                     },
                     new ToolStripSeparator(),
                     new ToolStripMenuItem(StrMenu.M_CNX, null, MenuItem_ClickConnection, StrMenu.M_CNX),
@@ -132,9 +138,24 @@ namespace cnauta.view
         #region ============ INTERFACE & METHODS =====================================
 
         /// <summary>
+        /// Provide a way to update the available time left
+        /// </summary>
+        /// <param name="HH">Hours in HH format</param>
+        /// <param name="MM">Minutes in MM format</param>
+        public void InUpdateTimeLeft(string HH, string MM)
+        {
+            _tmHH = HH;
+            _tmMM = MM;
+            _startTime = DateTime.Now;
+            
+            _timer.Stop();                                          // just in case already started
+            _timer.Start();
+        }
+
+        /// <summary>
         /// Recover the status of the status indicator (first item on the menu)
         /// </summary>
-        /// <param name="fromCxnSts">To know if caller comming from connected status</param>
+        /// <param name="fromCxnSts">To know if caller coming from connected status</param>
         public void InSetRecoverSts(bool fromCxnSts = true) 
         {
             if (fromCxnSts)
@@ -226,7 +247,7 @@ namespace cnauta.view
         /// <remarks>InSetConnSts == Set Up Connected Status</remarks>
         /// <param name="force2Connect">If this is true, it will tries to set the status to 'connected' no matter _flagAreConnected current value</param>
         /// <param name="accIndex">If we force force2Connect, we need an account drop down menu index to display as active</param>
-        public void InSetConnSts(bool force2Connect = false, int accIndex = -1)
+        public void InToggleCnxSts(bool force2Connect = false, int accIndex = -1)
         {
             var stsItem = _contextMenuStrip.Items[0];
             
@@ -238,7 +259,7 @@ namespace cnauta.view
                 stsItem.Text = StrMenu.M_STATUS_DISCONNECTED;
 
                 ((ToolStripMenuItem) _contextMenuStrip.Items[5]).DropDownItems[0].Enabled = false;
-                _contextMenuStrip.Items[1].Text = StrMenu.M_DEFAULT_TIME;
+                _contextMenuStrip.Items[1].Text = StrMenu.FormatTimeInfo();
                 _contextMenuStrip.Items[3].Text = StrMenu.M_CNX;
                 _contextMenuStrip.Items[7].Enabled = true;
                 
@@ -260,10 +281,6 @@ namespace cnauta.view
                 
                 InNotify(Strs.MSG_NTF_CONNECTED, Strs.MSG_NTF_CONNECTED_DSC);
                 
-                // timer section
-                _startTime = DateTime.Now;
-                _timer.Start();
-
                 if (accIndex >= 0 && accIndex < 3) DropMenuCheckAccount(accIndex);
             }
         }
@@ -274,7 +291,6 @@ namespace cnauta.view
         /// </summary>
         /// <remarks>SetReqSts == Set Up Request Status</remarks>
         /// <param name="tk">A cancellation token so it can notice if a caller want to terminate the execution</param>
-        /// <param name="cText">text to be shown in the <see cref="ToolStripItem"/> when termination happens</param>
         public async Task InSetReqSts(CancellationToken tk)
         {
             _contextMenuStrip.Items[0].ResetBackColor();
@@ -428,7 +444,7 @@ namespace cnauta.view
         private void Timer_Tick(object sender, EventArgs _)
         {
             var elapsedTime = DateTime.Now - _startTime;
-            _contextMenuStrip.Items[1].Text = $@"     {elapsedTime.Hours:D2}:{elapsedTime.Minutes:D2}";
+            _contextMenuStrip.Items[1].Text = StrMenu.FormatTimeInfo(_tmHH, _tmMM,$"{elapsedTime.Hours:D2}",$"{elapsedTime.Minutes:D2}");
         }
 
         #endregion ===================================================================
